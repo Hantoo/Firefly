@@ -74,7 +74,7 @@ namespace FireflyGuardian {
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "4.0.0.0")]
         public static void Main() {
-            SplashScreen splashScreen = new SplashScreen("projectresources/images/splashscreen2.png");
+            SplashScreen splashScreen = new SplashScreen("uiresources/images/splashscreen2.png");
             splashScreen.Show(true);
             FireflyGuardian.App app = new FireflyGuardian.App();
             app.InitializeComponent();

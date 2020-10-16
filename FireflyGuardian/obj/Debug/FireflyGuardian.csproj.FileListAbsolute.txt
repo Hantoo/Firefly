@@ -38,3 +38,8 @@ C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.cs
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.csproj.CopyComplete
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.exe
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.pdb
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.csprojAssemblyReference.cache
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DashboardView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DashboardView.baml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNetworkView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNetworkView.baml

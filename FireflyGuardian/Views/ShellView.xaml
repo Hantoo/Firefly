@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="FireFly"
-    Width="800"
-    Height="450"
+    Width="1500"
+    Height="800"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
 
@@ -78,6 +78,7 @@
                 Margin="0,0,0,50"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
+
                 <Button
                     Margin="5,5,5,5"
                     Background="{x:Null}"
@@ -110,71 +111,38 @@
                     Foreground="#ffffffff"
                     Text="Menu" />
             </StackPanel>-->
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <Button
-                    Margin="5,5,5,5"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Content="&#xF404;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Foreground="#ffffffff" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontFamily="Segoe UI"
-                    FontSize="14"
-                    Foreground="#ffffffff"
-                    Text="Dashboard" />
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <Button
-                    Margin="5,5,5,5"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Content="&#xF0B9;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Foreground="#ffffffff" />
-                <!--  Alt Icon: &#xEBD2;  -->
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontFamily="Segoe UI"
-                    FontSize="14"
-                    Foreground="#ffffffff"
-                    Text="Device Network" />
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <Button
-                    Margin="5,5,5,5"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Content="&#xEC51;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Foreground="#ffffffff" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontFamily="Segoe UI"
-                    FontSize="14"
-                    Foreground="#ffffffff"
-                    Text="File Management" />
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <Button
-                    Margin="5,5,5,5"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Content="&#xE823;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Foreground="#ffffffff" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontFamily="Segoe UI"
-                    FontSize="14"
-                    Foreground="#ffffffff"
-                    Text="Schedule" />
-            </StackPanel>
+            <ListBox
+                x:Name="Pages"
+                Margin="-10,0,0,0"
+                Background="#00373700"
+                SelectedIndex="{Binding Path=SelectedPage, Mode=OneWayToSource}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <!--<Rectangle
+                                Width="3"
+                                Margin="0,0,-5,0"
+                                Fill="{Binding colourSelector}" />-->
+                            <Button
+                                x:Name="Icon"
+                                Margin="0,5,0,5"
+                                Background="{x:Null}"
+                                BorderBrush="{x:Null}"
+                                Content="{Binding icon}"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16"
+                                Foreground="#ffffffff" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe UI"
+                                FontSize="14"
+                                Foreground="#ffffffff"
+                                Text="{Binding name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
         </StackPanel>
         <ContentControl
             x:Name="ActiveItem"
