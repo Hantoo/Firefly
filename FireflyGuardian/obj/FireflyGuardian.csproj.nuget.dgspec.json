@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\FireflyGuardian.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\FireflyGuardian.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\FireflyGuardian.csproj",
+        "projectName": "FireflyGuardian",
+        "projectPath": "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\FireflyGuardian.csproj",
+        "packagesPath": "C:\\Users\\joelb\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "C:\\Users\\joelb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "Caliburn.Micro": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "ModernWpfUI": {
+              "target": "Package",
+              "version": "[0.9.2, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}
