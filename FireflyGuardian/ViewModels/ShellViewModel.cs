@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Caliburn.Micro;
 using FireflyGuardian.Models;
 
@@ -26,32 +27,38 @@ namespace FireflyGuardian.ViewModels
             generatePages();
             ActivateItem(Pages[0].View);
             /*_uDPConnection = new UDPConnectionModel();*/
-            //StartUpView();
+            StartUpView();
+            /*MessageBox.Show(ServerResources.ServerManagement.settings.ftpUsername);*/
         }
 
-        /*public void StartUpView()
+        public void StartUpView()
         {
-            DataAccess.Init init = new DataAccess.Init();
+            ServerResources.DataAccess.Init init = new ServerResources.DataAccess.Init();
+            ServerResources.ServerManagement.Init();
             if (init.firstTimeStartUp)
             {
                 menuWidth = 0;
                 NotifyOfPropertyChange(() => menuWidth);
                 ActivateItem(new InitSetupWindowViewModel(init, this));
             }
-        }*/
+            else
+            {
+                ExitSetupView();
+            }
+        }
 
-        /*public void ExitSetupView()
+        public void ExitSetupView()
         {
             ActivateItem(Pages[0].View);
-            menuWidth = 250;
+            menuWidth = 40;
             NotifyOfPropertyChange(() => menuWidth);
-        }*/
+        }
 
 
         public void generatePages()
         {
             Pages.Add(new PageModel { icon = "\uF404", name = "Dashboard", reloadOnActive = false, View = new DashboardViewModel()  }); ;
-            Pages.Add(new PageModel { icon = "\uF0B9", name = "Device Network", reloadOnActive = false, View = new DeviceNetworkViewModel() });
+            Pages.Add(new PageModel { icon = "\uF0B9", name = "Device Network", reloadOnActive = true, View = new DeviceNetworkViewModel() });
             Pages.Add(new PageModel { icon = "\uEC51", name = "File Management", reloadOnActive = false });
             Pages.Add(new PageModel { icon = "\uE823", name = "Schedule", reloadOnActive = false });
             Pages.Add(new PageModel { icon = "\uE713", name = "Settings", reloadOnActive = true }); //View = new SettingsViewModel()

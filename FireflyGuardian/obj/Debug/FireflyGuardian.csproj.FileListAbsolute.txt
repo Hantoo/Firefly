@@ -43,3 +43,9 @@ C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DashboardVie
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DashboardView.baml
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNetworkView.g.cs
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNetworkView.baml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\InitSetupWindowView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Newtonsoft.Json.dll
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\InitSetupWindowView.baml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Dijkstra.NET.dll
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNodeGraphView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNodeGraphView.baml

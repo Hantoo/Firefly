@@ -8,6 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("projectresources/images/splashscreen2.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/0.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/1.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/10.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/2.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/3.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/4.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/5.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/6.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/7.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/8.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uiresources/images/defaultmediapool/9.png")]
 
 

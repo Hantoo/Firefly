@@ -21,5 +21,12 @@ namespace FireflyGuardian
             DisplayRootViewFor<ShellViewModel>();
             //base.OnStartup(sender, e);
         }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            //Shutsdown recieving thread for UDP server. Otherwise program will constantly run on thread.
+            ServerResources.UDP.UDPServer.shutdownUDP();
+            base.OnExit(sender, e);
+        }
     }
 }

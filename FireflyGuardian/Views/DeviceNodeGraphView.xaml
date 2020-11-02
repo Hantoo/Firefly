@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Class="FireflyGuardian.Views.DeviceNodeGraphView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:FireflyGuardian.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid x:Name="container" ClipToBounds="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <Canvas
+            x:Name="LayoutRootCanvas"
+            Margin="0"
+            ClipToBounds="False"
+            Focusable="True"
+            MouseDown="Canvas_MouseDown"
+            MouseMove="Canvas_MouseMove"
+            MouseUp="Canvas_MouseUp">
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform x:Name="st" />
+                    <TranslateTransform x:Name="translate" />
+                </TransformGroup>
+            </Canvas.RenderTransform>
+        </Canvas>
+        <StackPanel
+            Grid.Row="1"
+            Background="#292929"
+            Orientation="Horizontal">
+            <Button
+                x:Name="moveButton"
+                Margin="10,0,0,0"
+                Padding="10,0,10,0"
+                Background="#303030"
+                BorderThickness="0"
+                Content="&#xECE9;"
+                FontFamily="Segoe MDL2 Assets"
+                PreviewMouseLeftButtonDown="Canvas_Drag"
+                ToolTip="Move Canvas Toggle"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.InitialShowDelay="2000"
+                ToolTipService.ShowDuration="4000">
+                <Button.Style>
+                    <Style>
+                        <Setter Property="Button.Foreground" Value="#646464" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding canvasDraga}" Value="True">
+                                <Setter Property="Button.Foreground" Value="#FFB300" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding canvasDraga}" Value="False">
+                                <Setter Property="Button.Foreground" Value="#646464" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button
+                x:Name="nodeoveButton"
+                Margin="10,0,0,0"
+                Padding="10,0,10,0"
+                Background="#303030"
+                BorderThickness="0"
+                Content="&#xE759;"
+                FontFamily="Segoe MDL2 Assets"
+                PreviewMouseLeftButtonDown="Node_Drag"
+                ToolTip="Move Node Toggle"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.InitialShowDelay="2000"
+                ToolTipService.ShowDuration="4000">
+                <Button.Style>
+                    <Style>
+                        <Setter Property="Button.Foreground" Value="#646464" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding nodeDrag}" Value="True">
+                                <Setter Property="Button.Foreground" Value="#FFB300" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding nodeDrag}" Value="False">
+                                <Setter Property="Button.Foreground" Value="#646464" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Line
+                Margin="20,0,20,0"
+                Stroke="White"
+                X1="0"
+                X2="0"
+                Y1="5"
+                Y2="25" />
+            <Button
+                x:Name="FitToPage"
+                Margin="0,0,0,0"
+                Background="#3E3E3E"
+                Content="&#xE9A6;"
+                FontFamily="Segoe MDL2 Assets"
+                Foreground="#ffffff"
+                PreviewMouseLeftButtonDown="Canvas_FitToPage"
+                ToolTip="Fit To Page"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.InitialShowDelay="2000"
+                ToolTipService.ShowDuration="4000" />
+            <Button
+                Margin="10,0,0,0"
+                Background="#3E3E3E"
+                Content="&#xE8A3;"
+                FontFamily="Segoe MDL2 Assets"
+                Foreground="#ffffff"
+                PreviewMouseLeftButtonDown="Canvas_ZoomIn"
+                ToolTip="Zoom In"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.InitialShowDelay="2000"
+                ToolTipService.ShowDuration="4000" />
+            <Button
+                Margin="10,0,0,0"
+                Background="#3E3E3E"
+                Content="&#xE71F;"
+                FontFamily="Segoe MDL2 Assets"
+                Foreground="#ffffff"
+                PreviewMouseLeftButtonDown="Canvas_ZoomOut"
+                ToolTip="Zoom Out"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.InitialShowDelay="2000"
+                ToolTipService.ShowDuration="4000" />
+        </StackPanel>
+    </Grid>
+</UserControl>

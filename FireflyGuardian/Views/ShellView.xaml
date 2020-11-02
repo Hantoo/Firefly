@@ -19,7 +19,8 @@
             <Setter Property="Width" Value="50" />
 
             <Style.Triggers>
-                <EventTrigger RoutedEvent="MouseEnter">
+                <EventTrigger RoutedEvent="MouseEnter"> 
+                    <!--  ToDo: Change so that menu only opens when you click the burger icon  -->
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation
@@ -69,8 +70,7 @@
             x:Name="MenuPanel"
             Grid.Row="0"
             Grid.Column="0"
-            Width="40"
-            MinWidth="40"
+            Width="{Binding menuWidth, Mode=OneWay}"
             Background="#1F1F1F"
             Orientation="Vertical"
             Style="{StaticResource MenuStyling}">
@@ -123,15 +123,13 @@
                                 Width="3"
                                 Margin="0,0,-5,0"
                                 Fill="{Binding colourSelector}" />-->
-                            <Button
+                            <TextBlock
                                 x:Name="Icon"
-                                Margin="0,5,0,5"
-                                Background="{x:Null}"
-                                BorderBrush="{x:Null}"
-                                Content="{Binding icon}"
+                                Margin="10,10,10,10"
                                 FontFamily="Segoe MDL2 Assets"
                                 FontSize="16"
-                                Foreground="#ffffffff" />
+                                Foreground="#ffffffff"
+                                Text="{Binding icon}" />
                             <TextBlock
                                 VerticalAlignment="Center"
                                 FontFamily="Segoe UI"

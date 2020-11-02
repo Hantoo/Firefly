@@ -24,6 +24,6 @@ namespace FireflyGuardian.Views
             InitializeComponent();
         }
 
-       
+        
     }
 }

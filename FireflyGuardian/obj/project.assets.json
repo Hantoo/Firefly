@@ -27,6 +27,15 @@
           "lib/net45/Caliburn.Micro.dll": {}
         }
       },
+      "Dijkstra.NET/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -184,6 +193,15 @@
           "lib/net462/zh-Hant/ModernWpf.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
       "System.Runtime.WindowsRuntime/4.6.0": {
@@ -252,6 +270,15 @@
           "lib/net45/Caliburn.Micro.dll": {}
         }
       },
+      "Dijkstra.NET/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -409,6 +436,15 @@
           "lib/net462/zh-Hant/ModernWpf.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
       "System.Runtime.WindowsRuntime/4.6.0": {
@@ -477,6 +513,15 @@
           "lib/net45/Caliburn.Micro.dll": {}
         }
       },
+      "Dijkstra.NET/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -634,6 +679,15 @@
           "lib/net462/zh-Hant/ModernWpf.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
       "System.Runtime.WindowsRuntime/4.6.0": {
@@ -702,6 +756,15 @@
           "lib/net45/Caliburn.Micro.dll": {}
         }
       },
+      "Dijkstra.NET/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -859,6 +922,15 @@
           "lib/net462/zh-Hant/ModernWpf.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
       "System.Runtime.WindowsRuntime/4.6.0": {
@@ -985,6 +1057,19 @@
         "lib/portable-net45+win8+wp8+wpa81+MonoAndroid10+Xamarin.iOS10+MonoTouch10+uap10.0/Caliburn.Micro.dll.mdb",
         "lib/sl5/Caliburn.Micro.XML",
         "lib/sl5/Caliburn.Micro.dll"
+      ]
+    },
+    "Dijkstra.NET/1.2.1": {
+      "sha512": "qf/0y/HTmetbXShlU1Ry2wqEmIDj2Tp559Xye8BCASwHGhg/TdwQBG/euKKf5H/Ccjsv1ACSl8M330F0rmvv/w==",
+      "type": "package",
+      "path": "dijkstra.net/1.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dijkstra.net.1.2.1.nupkg.sha512",
+        "dijkstra.net.nuspec",
+        "lib/net40/Dijkstra.NET.dll",
+        "lib/netstandard1.3/Dijkstra.NET.dll"
       ]
     },
     "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
@@ -1243,6 +1328,37 @@
         "readme.txt"
       ]
     },
+    "Newtonsoft.Json/12.0.3": {
+      "sha512": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "type": "package",
+      "path": "newtonsoft.json/12.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.12.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
+      ]
+    },
     "System.Runtime.WindowsRuntime/4.6.0": {
       "sha512": "IWrs1TmbxP65ZZjIglNyvDkFNoV5q2Pofg5WO7I8RKQOpLdFprQSh3xesOoClBqR4JHr4nEB1Xk1MqLPW1jPuQ==",
       "type": "package",
@@ -1431,7 +1547,9 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.7.2": [
       "Caliburn.Micro >= 3.2.0",
-      "ModernWpfUI >= 0.9.2"
+      "Dijkstra.NET >= 1.2.1",
+      "ModernWpfUI >= 0.9.2",
+      "Newtonsoft.Json >= 12.0.3"
     ]
   },
   "packageFolders": {
@@ -1471,9 +1589,17 @@
             "target": "Package",
             "version": "[3.2.0, )"
           },
+          "Dijkstra.NET": {
+            "target": "Package",
+            "version": "[1.2.1, )"
+          },
           "ModernWpfUI": {
             "target": "Package",
             "version": "[0.9.2, )"
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[12.0.3, )"
           }
         }
       }
