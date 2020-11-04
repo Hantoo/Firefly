@@ -11,6 +11,8 @@ namespace FireflyGuardian.Models
         public string ftpURL { get; set; }
         public string ftpUsername { get; set; }
         public string ftpPassword { get; set; }
+        public string absoluteLocationOfAppData { get; set; }
+        public string absoluteLocationOfLocalisedMedia { get; set; }
         
     }
 }

@@ -39,23 +39,33 @@ namespace FireflyGuardian.Views
         private bool nodeDrag = false;
         private Point clickPosition;
         private Double prevX, prevY;
-
+        public bool firstTime = false;
         public DeviceNodeGraphView()
         {
             InitializeComponent();
-            FireflyGuardian.ViewModels.DeviceNetworkViewModel.RefreshCanvas += refreshGraph; 
-            FireflyGuardian.ViewModels.DeviceNetworkViewModel.UserChangedNode += changeSelectedNode; 
-
-            refreshGraph();
+            
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.RefreshCanvas += refreshGraph;
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.UserChangedNode += changeSelectedNode;
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.DestroyCanvas += destoryGraph;
         }
 
-        
+        public void destoryGraph() //Removes all node assigned names when view is closed or graph refreshed
+        {
+            for (int i = 0; i < ServerManagement.devices.Count; i++)
+            {
+                UnregisterName("Node" + ServerManagement.devices[i].deviceID.ToString() + "_rect");
+                UnregisterName("Node" + ServerManagement.devices[i].deviceID.ToString());
+            }
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.RefreshCanvas -= refreshGraph;
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.UserChangedNode -= changeSelectedNode;
+            FireflyGuardian.ViewModels.DeviceNetworkViewModel.DestroyCanvas -= destoryGraph;
+        }
         
         public void refreshGraph()
         {
             //Set Blocks
             LayoutRootCanvas.Children.Clear();
-
+            Console.WriteLine("RefreshGraph");
             for (int i =0; i < ServerManagement.devices.Count; i++)
             {
                 var grid = new Grid();
@@ -73,15 +83,29 @@ namespace FireflyGuardian.Views
                 TextBlock text = new TextBlock();
                 text.Text = ServerManagement.devices[i].deviceID.ToString();
                 rect.Name = "Node" + ServerManagement.devices[i].deviceID.ToString() + "_rect";
-                RegisterName(rect.Name, rect);
-               
+                
+                
                 text.FontSize = 1;
                 grid.Children.Add(text);
                 grid.Name = "Node" + ServerManagement.devices[i].deviceID.ToString();
                 grid.Focusable = true;
-                RegisterName(grid.Name, grid);
-                /*grid.PreviewMouseLeftButtonDown += nodeClicked;
-                grid.MouseMove += Node_MouseMove;
+               
+                grid.MouseDown += nodeClicked;
+                try
+                {
+
+                    RegisterName(rect.Name, rect);
+                    RegisterName(grid.Name, grid);
+                }
+                catch(Exception e)
+                {
+                    
+                    UnregisterName(rect.Name);
+                    UnregisterName(grid.Name);
+                    RegisterName(rect.Name, rect);
+                    RegisterName(grid.Name, grid);
+                }
+                /*grid.MouseMove += Node_MouseMove;
                 //grid.MouseUp += Node_MouseUp;
                 grid.PreviewMouseLeftButtonUp += Node_MouseUp;*/
                 Canvas.SetLeft(grid, ServerManagement.devices[i].deviceXZLocationOnGrid.Item1* scaleFactor);

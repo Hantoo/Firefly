@@ -36,10 +36,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>UIResources\Images\ApplicationResources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -59,6 +63,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\DeviceModel.cs" />
+    <Compile Include="Models\MediaSlotModel.cs" />
     <Compile Include="Models\PageModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\udpDataModel.cs" />
@@ -76,6 +81,8 @@
     <Compile Include="ViewModels\DeviceNetworkViewModel.cs" />
     <Compile Include="ViewModels\DeviceNodeGraphViewModel.cs" />
     <Compile Include="ViewModels\InitSetupWindowViewModel.cs" />
+    <Compile Include="ViewModels\MediaPoolViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
@@ -88,6 +95,12 @@
     </Compile>
     <Compile Include="Views\InitSetupWindowView.xaml.cs">
       <DependentUpon>InitSetupWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MediaPoolView.xaml.cs">
+      <DependentUpon>MediaPoolView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -118,6 +131,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InitSetupWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MediaPoolView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,6 +205,17 @@
     <Resource Include="UIResources\Images\DefaultMediaPool\7.png" />
     <Resource Include="UIResources\Images\DefaultMediaPool\8.png" />
     <Resource Include="UIResources\Images\DefaultMediaPool\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UIResources\Images\ApplicationResources\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NoImage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
+using FireflyGuardian.ServerResources;
 using FireflyGuardian.ViewModels;
+using Newtonsoft.Json;
 
 namespace FireflyGuardian
 {
@@ -26,6 +28,8 @@ namespace FireflyGuardian
         {
             //Shutsdown recieving thread for UDP server. Otherwise program will constantly run on thread.
             ServerResources.UDP.UDPServer.shutdownUDP();
+            string JSONresult = JsonConvert.SerializeObject(ServerManagement.settings);
+            ServerResources.DataAccess.Init.updateJson(JSONresult);
             base.OnExit(sender, e);
         }
     }

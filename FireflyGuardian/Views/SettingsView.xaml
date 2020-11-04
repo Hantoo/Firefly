@@ -1,0 +1,26 @@
+﻿<UserControl
+    x:Class="FireflyGuardian.Views.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:FireflyGuardian.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel MaxWidth="200">
+            <TextBlock Foreground="#fff" Text="FTP IP" />
+            <TextBox x:Name="FTP_IP" Text="{Binding FTP_IP, Mode=TwoWay}" />
+            <TextBlock Foreground="#fff" Text="FTP USERNAME" />
+            <TextBox x:Name="FTP_User" Text="{Binding FTP_User, Mode=TwoWay}" />
+            <TextBlock Foreground="#fff" Text="FTP PASSWORD" />
+            <TextBox x:Name="FTP_Pass" Text="{Binding FTP_Pass, Mode=TwoWay}" />
+            <Button
+                x:Name="SaveFTP"
+                Margin="30,10,0,0"
+                Content="SAVE FTP SETTINGS"
+                Foreground="#fff" />
+        </StackPanel>
+    </Grid>
+</UserControl>

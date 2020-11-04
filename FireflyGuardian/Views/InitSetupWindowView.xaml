@@ -58,9 +58,16 @@
                     Text="{Binding Path=ftp_Password, Mode=OneWayToSource}" />
                 <Button
                     x:Name="submitSettings"
-                    Margin="0,50,0,150"
+                    Margin="0,50,0,20"
                     HorizontalAlignment="Center"
                     Content="Save Settings" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontWeight="Bold"
+                    Foreground="#800C0C"
+                    Text="{Binding errorMessage}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

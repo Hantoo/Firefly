@@ -49,3 +49,7 @@ C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\InitSetupWin
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Dijkstra.NET.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNodeGraphView.g.cs
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\DeviceNodeGraphView.baml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\MediaPoolView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\MediaPoolView.baml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\SettingsView.g.cs
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\Views\SettingsView.baml

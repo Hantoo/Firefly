@@ -9,17 +9,27 @@ using System.Threading.Tasks;
 
 namespace FireflyGuardian.ServerResources
 {
+
     class ServerManagement
     {
+        /*public struct serverProjectVariables{
+            public string FTPIP;
+            public string FTPPort;
+            public string FTPUser;
+            public string FTPPassword;
+        }*/
+
         public static SettingsModel settings;
         public static UDPServer udpServer;
         public static List<DeviceModel> devices = new List<DeviceModel>();
         //Global variable to indicate any changes to device array which compromises the intergrity of path algorithm, etc.
         public static bool deviceStructureValid = true;
         //public static List<DeviceModel> prevdevices = new List<DeviceModel>();
+        //public static serverProjectVariables serverVariables;
         public ServerManagement()
         {
-                
+            //serverVariables = new serverProjectVariables();
+           
         }
 
         public static void Init()
@@ -29,8 +39,17 @@ namespace FireflyGuardian.ServerResources
             udpServer = new UDPServer();
             //Poll Devices
             UDPPreformattedMessages.PollBoards();
-            //RefreshDeviceList();
+            /*serverVariables.FTPIP = "192.168.0.11"; // Don't Hard Code
+            serverVariables.FTPPort = "21"; // Don't Hard Code //ToDo: Don't HARD CODE THE VALUES HAHA 
+            serverVariables.FTPUser = "FTP-User"; // Don't Hard Code
+            serverVariables.FTPPassword = "root"; // Don't Hard Code*/
+            //RefreshDeviceList(); 
             //
+        }
+
+        public static void saveAllJsonFiles()
+        {
+
         }
 
        /* private static async Task RefreshDeviceList()

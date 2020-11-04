@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FireflyGuardian.Models;
+using FireflyGuardian.Properties;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,10 +37,39 @@ namespace FireflyGuardian.ServerResources.DataAccess
 
             // Combine the base folder with your specific folder....
             appdataFolder = Path.Combine(folder, "FireFly");
-
+            if (File.Exists(appdataFolder + "/settings.json"))
+            {
+                string json = File.ReadAllText(appdataFolder + "/settings.json");
+                   SettingsModel settings = Newtonsoft.Json.JsonConvert.DeserializeObject<SettingsModel>(json);
+                FireflyGuardian.ServerResources.ServerManagement.settings = settings;
+            }
+            else
+            {
+                FireflyGuardian.ServerResources.ServerManagement.settings = new SettingsModel();
+            }
+            FireflyGuardian.ServerResources.ServerManagement.settings.absoluteLocationOfAppData = appdataFolder;
             // CreateDirectory will check if folder exists and, if not, create it.
             // If folder exists then CreateDirectory will do nothing.
             Directory.CreateDirectory(appdataFolder);
+            Directory.CreateDirectory(appdataFolder+"/LocalisedMediaPool");
+            FireflyGuardian.ServerResources.ServerManagement.settings.absoluteLocationOfLocalisedMedia = appdataFolder + "\\LocalisedMediaPool";
+            createBaseLocalisedMediaPool();
+        }
+
+        public void createBaseLocalisedMediaPool()
+        {
+            Properties.Resources._0.Save(appdataFolder + "/LocalisedMediaPool/0.png");
+            Properties.Resources._1.Save(appdataFolder + "/LocalisedMediaPool/1.png");
+            Properties.Resources._2.Save(appdataFolder + "/LocalisedMediaPool/2.png");
+            Properties.Resources._3.Save(appdataFolder + "/LocalisedMediaPool/3.png");
+            Properties.Resources._4.Save(appdataFolder + "/LocalisedMediaPool/4.png");
+            Properties.Resources._5.Save(appdataFolder + "/LocalisedMediaPool/5.png");
+            Properties.Resources._6.Save(appdataFolder + "/LocalisedMediaPool/6.png");
+            Properties.Resources._7.Save(appdataFolder + "/LocalisedMediaPool/7.png");
+            Properties.Resources._8.Save(appdataFolder + "/LocalisedMediaPool/8.png");
+            Properties.Resources._9.Save(appdataFolder + "/LocalisedMediaPool/9.png");
+            Properties.Resources._10.Save(appdataFolder + "/LocalisedMediaPool/10.png");
+            
         }
 
         public bool checkIfJSONExists()
@@ -47,12 +78,10 @@ namespace FireflyGuardian.ServerResources.DataAccess
             // Check if file already exists. If yes, delete it.     
             if (File.Exists(appdataFolder+"/settings.json"))
             {
-                string json = File.ReadAllText(appdataFolder + "/settings.json");
-                Models.SettingsModel settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.SettingsModel>(json);
-                FireflyGuardian.ServerResources.ServerManagement.settings = settings;
                 return true;
             }
-            else { return false;
+            else { 
+                return false;
             }
         }
 

@@ -39,6 +39,56 @@ namespace FireflyGuardian.ServerResources.DataAccess
         }
 
 
+        public static bool VerifyConnection(string serverAddress, string username, string pass)
+        {
+            try
+            {
+                Console.WriteLine("URI: " + serverAddress);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://"+serverAddress+"/");
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
+                request.Credentials = new NetworkCredential(username, pass);
+                request.GetResponse();
+            }
+            catch (WebException ex)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool VerifyFileInFTP(string serverAddress, string username, string pass, string filename)
+        {
+            
+            var request = (FtpWebRequest)WebRequest.Create("ftp://" + serverAddress + filename);
+            request.Credentials = new NetworkCredential(username, pass);
+            request.Method = WebRequestMethods.Ftp.GetFileSize;
+
+            try
+            {
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                return true;
+            }
+            catch (WebException ex)
+            {
+                FtpWebResponse response = (FtpWebResponse)ex.Response;
+                if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                    return false;
+            }
+            return false;
+            
+
+        }
+
+        public static void syncLocalisedMediaPoolToFTPServer()
+        {
+            DirectoryInfo mediapoolInfo = new DirectoryInfo(ServerManagement.settings.absoluteLocationOfLocalisedMedia);
+            for(int i=0; i< mediapoolInfo.GetFiles().Length; i++)
+            {
+                UploadFileToFTP(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png", ServerManagement.settings.ftpURL, i+".png", ServerManagement.settings.ftpUsername, ServerManagement.settings.ftpPassword);
+            }
+            Console.WriteLine("Items In Pool: "+mediapoolInfo.GetFiles().Length);
+          
+        }
 
         private static void ThreadedUploadToFTP(object ftpThreadInfomation)
         {
@@ -62,8 +112,8 @@ namespace FireflyGuardian.ServerResources.DataAccess
             {
                 if (ftpResp.StatusDescription.StartsWith("226"))
                 {
-                    Console.WriteLine("File Uploaded.");
-                    MessageBox.Show("File Uploaded");
+                    Console.WriteLine("File Uploaded: " + infomation.fileNameWithExtenstion);
+                   
                 }
             }
         }

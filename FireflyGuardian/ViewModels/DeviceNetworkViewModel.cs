@@ -28,12 +28,14 @@ namespace FireflyGuardian.ViewModels
     //ToDo: Add Removal Of Connections
     public delegate void NotifyCanvasRefresh();
     public delegate void NotifyNodeChange();
+    public delegate void NotifyDeviceViewModelDestory();
 
     class DeviceNetworkViewModel : Screen
     {
         private BindableCollection<DeviceModel> _deviceList = new BindableCollection<DeviceModel>();
         public BindableCollection<DeviceModel> deviceList { get { return _deviceList; } }
         public static event NotifyCanvasRefresh RefreshCanvas;
+        public static event NotifyDeviceViewModelDestory DestroyCanvas;
         private NodeRouting routes;
         public static event Action<int> UserChangedNode;
         private int _statusBannerHeight = 0;
@@ -57,9 +59,25 @@ namespace FireflyGuardian.ViewModels
             FireflyGuardian.Views.DeviceNodeGraphView.UserToggledCanvasDrag += toggleUserCanvasDrag;
             FireflyGuardian.Views.DeviceNodeGraphView.UserToggledNodeDrag += toggleUserNodeDrag;
             FireflyGuardian.Views.DeviceNodeGraphView.UserSelectedNode += setSelectedDeviceFromGraph;
+            FireflyGuardian.ViewModels.ShellViewModel.NotfiyNewView += ViewScreen;
+            FireflyGuardian.ViewModels.ShellViewModel.NotfiyDestoryView += DestoryScreen;
+            
 
-            updateDeviceListWindow();
+        }
 
+        public void ViewScreen()
+        {
+            if (FireflyGuardian.ViewModels.ShellViewModel.activePageType == this.GetType())
+            {
+                updateDeviceListWindow();
+            }
+        }
+        public void DestoryScreen()
+        {
+            if (FireflyGuardian.ViewModels.ShellViewModel.activePageType == this.GetType())
+            {
+                DestroyCanvas.Invoke();
+            }
         }
 
      

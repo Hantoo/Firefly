@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using FireflyGuardian.Models;
-
+using FireflyGuardian.ServerResources.DataAccess;
 
 namespace FireflyGuardian.ViewModels
 {
@@ -17,6 +17,7 @@ namespace FireflyGuardian.ViewModels
         public string ftp_IP { get; set; }
         public string ftp_User { get; set; }
         public string ftp_Password { get; set; }
+        public string errorMessage { get; set; }
         private FireflyGuardian.ServerResources.DataAccess.Init _Init;
         private ShellViewModel _shell;
         public InitSetupWindowViewModel(FireflyGuardian.ServerResources.DataAccess.Init init, ShellViewModel shell)
@@ -33,10 +34,23 @@ namespace FireflyGuardian.ViewModels
             settings.ftpURL = ftp_IP;
             settings.ftpUsername = ftp_User;
             FireflyGuardian.ServerResources.ServerManagement.settings = settings;
-            string JSONresult = JsonConvert.SerializeObject(settings);
+            
+            if (testSettings())
+            {
+                string JSONresult = JsonConvert.SerializeObject(settings);
+                _Init.generateSettings(JSONresult);
+                _shell.ExitSetupView();
+            }
+            else
+            {
+                errorMessage = "["+DateTime.Now.ToString()+"] Connection Can Not Be Established. Please Verify Details / Connection";
+                NotifyOfPropertyChange(() => errorMessage);
+            }
+        }
 
-            _Init.generateSettings(JSONresult);
-            _shell.ExitSetupView();
+        public bool testSettings()
+        {
+            return FTPAccess.VerifyConnection(FireflyGuardian.ServerResources.ServerManagement.settings.ftpURL, FireflyGuardian.ServerResources.ServerManagement.settings.ftpUsername, FireflyGuardian.ServerResources.ServerManagement.settings.ftpPassword);
         }
     }
 }
