@@ -1,0 +1,816 @@
+﻿<UserControl
+    x:Class="FireflyGuardian.Views.ScheduleView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:FireflyGuardian.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="clr-namespace:FireflyGuardian.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="WarningHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#8A7B66" />
+                <GradientStop Offset="1" Color="#8A7B66" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GoodHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#57BE3B" />
+                <GradientStop Offset="0.55" Color="#46BE3B" />
+                <GradientStop Offset="0.55" Color="#1E7227" />
+                <GradientStop Offset="1" Color="#0F8015" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="ErrorHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#BE3B3B" />
+                <GradientStop Offset="0.55" Color="#BE3B3B" />
+                <GradientStop Offset="0.55" Color="#8A7B66" />
+                <GradientStop Offset="1" Color="#8A7B66" />
+            </LinearGradientBrush>
+            <Style x:Key="statusHeading" TargetType="{x:Type StackPanel}">
+                <Style.Resources />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Warning}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource WarningHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Good}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource GoodHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Error}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource ErrorHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding showStatus}" Value="True">
+
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="60"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="0"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="renameButtonStyle" TargetType="Button">
+                <Style.Triggers>
+
+                    <DataTrigger Binding="{Binding renameMediaButton}" Value="False">
+                        <Setter Property="Button.Visibility" Value="Visible" />
+                        <Setter Property="Button.Height" Value="auto" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding renameMediaButton}" Value="True">
+                        <Setter Property="Button.Visibility" Value="Hidden" />
+                        <Setter Property="Button.Height" Value="0" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding showMediaUploadButton}" Value="Visible">
+                        <Setter Property="Button.Visibility" Value="Visible" />
+
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding showMediaUploadButton}" Value="Hidden">
+                        <Setter Property="Button.Visibility" Value="Hidden" />
+
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="renameStackPanelStyle" TargetType="StackPanel">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding renameMediaButton}" Value="True">
+                        <Setter Property="StackPanel.Visibility" Value="Visible" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding renameMediaButton}" Value="False">
+                        <Setter Property="StackPanel.Visibility" Value="Hidden" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360" />
+            <ColumnDefinition
+                Width="*"
+                MinWidth="900"
+                MaxWidth="900" />
+            <ColumnDefinition Width="0.4*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.ColumnSpan="3"
+            Background="#292929"
+            Orientation="Horizontal">
+
+            <Button
+                x:Name="AddRoutine"
+                Margin="5,0,0,0"
+                Background="#3E3E3E"
+                Content="Add Routine"
+                Foreground="#ffffff" />
+
+
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Grid.ColumnSpan="3"
+            MaxHeight="0"
+            Style="{StaticResource statusHeading}">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock FontWeight="Bold" Text="{Binding statusMessage}" />
+            </StackPanel>
+        </StackPanel>
+        <!--  Routine List  -->
+        <ScrollViewer
+            Grid.Row="2"
+            Grid.Column="0"
+            HorizontalScrollBarVisibility="Hidden">
+            <ListView x:Name="routines" SelectedItem="{Binding SelectedRoutine, Mode=TwoWay}">
+
+                <!--<ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="IsSelected" Value="True" />
+
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="ListViewItem.Background" Value="#2D3F6A" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>-->
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border
+                            Margin="10"
+                            BorderBrush="#282828"
+                            BorderThickness="4"
+                            CornerRadius="0"
+                            MouseEnter="Border_MouseEnter"
+                            Tag="{Binding routineName}">
+
+                            <StackPanel>
+
+
+                                <StackPanel
+                                    x:Name="RoutineDelete"
+                                    Width="312"
+                                    Height="90"
+                                    Panel.ZIndex="1000"
+                                    Background="#1D1D1D">
+
+                                    <StackPanel.Style>
+                                        <Style>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding suggestDelete, Mode=TwoWay}" Value="True">
+                                                    <Setter Property="StackPanel.Visibility" Value="Visible" />
+                                                    <Setter Property="StackPanel.Background" Value="#fff" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding suggestDelete, Mode=TwoWay}" Value="False">
+                                                    <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <StackPanel
+                                        Margin="15"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <TextBlock
+                                            FontWeight="DemiBold"
+                                            Foreground="#fff"
+                                            Text="Are You Sure?"
+                                            TextAlignment="Center" />
+                                        <StackPanel
+                                            Margin="10"
+                                            HorizontalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <Button
+                                                x:Name="ConfirmDelete"
+                                                Margin="0,0,10,0"
+                                                cal:Message.Attach="ConfirmDelete"
+                                                Background="#3F9854"
+                                                Content="&#xE74D;"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Foreground="White" />
+                                            <Button
+                                                x:Name="CancelDelete"
+                                                cal:Message.Attach="CancelDelete"
+                                                Background="#570101"
+                                                Content="&#xF13D;"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Foreground="White" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel
+                                    x:Name="RoutineInfo"
+                                    Width="312"
+                                    Height="90"
+                                    Panel.ZIndex="1"
+                                    Background="#282828"
+                                    Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding suggestDelete, Mode=TwoWay}" Value="False">
+                                                    <Setter Property="StackPanel.Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding suggestDelete, Mode=TwoWay}" Value="True">
+                                                    <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+
+                                    <TextBlock
+                                        Width="64"
+                                        Height="64"
+                                        Margin="10"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        FontSize="64"
+                                        Foreground="{Binding routineIconHexColour}"
+                                        Text="{Binding routineIcon}" />
+                                    <StackPanel>
+                                        <TextBlock
+                                            MaxWidth="170"
+                                            Margin="10"
+                                            FontWeight="Bold"
+                                            Foreground="#fff"
+                                            Text="{Binding routineName}" />
+                                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                            <TextBlock Foreground="#ADADAD" Text="Slots Amount: " />
+                                            <TextBlock Foreground="#ADADAD" Text="{Binding routineSlotCount}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel VerticalAlignment="Stretch">
+                                        <Border
+                                            BorderBrush="#FF1D1D1D"
+                                            BorderThickness="2"
+                                            CornerRadius="0">
+                                            <Button
+                                                x:Name="toggleRoutineActive"
+                                                Height="41"
+                                                VerticalAlignment="Stretch"
+                                                cal:Message.Attach="toggleRoutineActive"
+                                                Content="&#xEDB5;"
+                                                FontFamily="Segoe MDL2 Assets">
+                                                <Button.Style>
+                                                    <Style>
+                                                        <Setter Property="Button.Foreground" Value="#7C7C7C" />
+                                                        <Setter Property="Button.Background" Value="#35000000" />
+                                                        <Setter Property="Button.BorderBrush" Value="#FF1D1D1D" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding routineActive, Mode=OneWay}" Value="True">
+                                                                <Setter Property="Button.Foreground" Value="#35FC30" />
+                                                                <Setter Property="Button.Background" Value="#4B235710" />
+                                                                <Setter Property="Button.BorderBrush" Value="Transparent" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </Border>
+                                        <Border
+                                            BorderBrush="#FF1D1D1D"
+                                            BorderThickness="2"
+                                            CornerRadius="0">
+                                            <Button
+                                                Height="41"
+                                                VerticalAlignment="Stretch"
+                                                Content="&#xE74D;"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Foreground="#7C7C7C"
+                                                PreviewMouseLeftButtonDown="TriggerSuggestedDelete_PreviewMouseLeftButtonDown" />
+                                        </Border>
+                                    </StackPanel>
+
+
+
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+        <!--  Routine Details  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            MinWidth="900"
+            Background="#15000000">
+
+            <StackPanel Margin="30,10">
+                <TextBlock Foreground="#fff" Text="Routine Name" />
+                <TextBlock
+                    x:Name="SelectedRoutine_routineName"
+                    Margin="0,0,0,20"
+                    FontSize="20pt"
+                    FontWeight="DemiBold"
+                    Foreground="#fff"
+                    Text="{Binding SelectedRoutine.routineName, Mode=TwoWay}" />
+
+                <TextBlock Foreground="#fff" Text="Details" />
+                <TextBlock Foreground="#fff" Text="Running Schedule" />
+                <ComboBox
+                    x:Name="DaySelector"
+                    Width="300"
+                    SelectedIndex="{Binding SelectedRoutine.routineScheduleIndex, Mode=TwoWay}"
+                    SelectionChanged="TimeSelectionChanged">
+                    <ComboBoxItem Content="Everyday" />
+                    <ComboBoxItem Content="Week Days" />
+                    <ComboBoxItem Content="Weekend Days" />
+                    <ComboBoxItem Content="Certain Days Of The Week" />
+                </ComboBox>
+                <!--  Routine Scheudle  -->
+                <StackPanel>
+                    <StackPanel>
+                        <Button
+                            x:Name="AddTimeSlot"
+                            Margin="0,10,0,0"
+                            Background="#A5F0F8FF"
+                            Content="Add TimeSlot"
+                            Foreground="#fff" />
+                        <ListBox
+                            Margin="0,0,0,0"
+                            Background="White"
+                            ItemsSource="{Binding timeslots, Mode=TwoWay}"
+                            SelectedIndex="{Binding timeslotIndex, Mode=OneWayToSource}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel
+                                        MouseEnter="TimeSlot_MouseEnter"
+                                        Orientation="Horizontal"
+                                        Tag="{Binding timeslotName}">
+                                        <StackPanel>
+                                            <TextBlock Text="Start Time" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <ComboBox SelectedIndex="{Binding startHour, Mode=TwoWay}">
+                                                    <ComboBoxItem>0</ComboBoxItem>
+                                                    <ComboBoxItem>1</ComboBoxItem>
+                                                    <ComboBoxItem>2</ComboBoxItem>
+                                                    <ComboBoxItem>3</ComboBoxItem>
+                                                    <ComboBoxItem>4</ComboBoxItem>
+                                                    <ComboBoxItem>5</ComboBoxItem>
+                                                    <ComboBoxItem>6</ComboBoxItem>
+                                                    <ComboBoxItem>7</ComboBoxItem>
+                                                    <ComboBoxItem>8</ComboBoxItem>
+                                                    <ComboBoxItem>9</ComboBoxItem>
+                                                    <ComboBoxItem>10</ComboBoxItem>
+                                                    <ComboBoxItem>11</ComboBoxItem>
+                                                    <ComboBoxItem>12</ComboBoxItem>
+                                                    <ComboBoxItem>13</ComboBoxItem>
+                                                    <ComboBoxItem>14</ComboBoxItem>
+                                                    <ComboBoxItem>15</ComboBoxItem>
+                                                    <ComboBoxItem>16</ComboBoxItem>
+                                                    <ComboBoxItem>17</ComboBoxItem>
+                                                    <ComboBoxItem>18</ComboBoxItem>
+                                                    <ComboBoxItem>19</ComboBoxItem>
+                                                    <ComboBoxItem>20</ComboBoxItem>
+                                                    <ComboBoxItem>21</ComboBoxItem>
+                                                    <ComboBoxItem>22</ComboBoxItem>
+                                                    <ComboBoxItem>23</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox SelectedIndex="{Binding startMin, Mode=TwoWay}">
+                                                    <ComboBoxItem>0</ComboBoxItem>
+                                                    <ComboBoxItem>1</ComboBoxItem>
+                                                    <ComboBoxItem>2</ComboBoxItem>
+                                                    <ComboBoxItem>3</ComboBoxItem>
+                                                    <ComboBoxItem>4</ComboBoxItem>
+                                                    <ComboBoxItem>5</ComboBoxItem>
+                                                    <ComboBoxItem>6</ComboBoxItem>
+                                                    <ComboBoxItem>7</ComboBoxItem>
+                                                    <ComboBoxItem>8</ComboBoxItem>
+                                                    <ComboBoxItem>9</ComboBoxItem>
+                                                    <ComboBoxItem>10</ComboBoxItem>
+                                                    <ComboBoxItem>11</ComboBoxItem>
+                                                    <ComboBoxItem>12</ComboBoxItem>
+                                                    <ComboBoxItem>13</ComboBoxItem>
+                                                    <ComboBoxItem>14</ComboBoxItem>
+                                                    <ComboBoxItem>15</ComboBoxItem>
+                                                    <ComboBoxItem>16</ComboBoxItem>
+                                                    <ComboBoxItem>17</ComboBoxItem>
+                                                    <ComboBoxItem>18</ComboBoxItem>
+                                                    <ComboBoxItem>19</ComboBoxItem>
+                                                    <ComboBoxItem>20</ComboBoxItem>
+                                                    <ComboBoxItem>21</ComboBoxItem>
+                                                    <ComboBoxItem>22</ComboBoxItem>
+                                                    <ComboBoxItem>23</ComboBoxItem>
+                                                    <ComboBoxItem>24</ComboBoxItem>
+                                                    <ComboBoxItem>25</ComboBoxItem>
+                                                    <ComboBoxItem>26</ComboBoxItem>
+                                                    <ComboBoxItem>27</ComboBoxItem>
+                                                    <ComboBoxItem>28</ComboBoxItem>
+                                                    <ComboBoxItem>29</ComboBoxItem>
+                                                    <ComboBoxItem>30</ComboBoxItem>
+                                                    <ComboBoxItem>31</ComboBoxItem>
+                                                    <ComboBoxItem>32</ComboBoxItem>
+                                                    <ComboBoxItem>33</ComboBoxItem>
+                                                    <ComboBoxItem>34</ComboBoxItem>
+                                                    <ComboBoxItem>35</ComboBoxItem>
+                                                    <ComboBoxItem>36</ComboBoxItem>
+                                                    <ComboBoxItem>37</ComboBoxItem>
+                                                    <ComboBoxItem>38</ComboBoxItem>
+                                                    <ComboBoxItem>39</ComboBoxItem>
+                                                    <ComboBoxItem>40</ComboBoxItem>
+                                                    <ComboBoxItem>41</ComboBoxItem>
+                                                    <ComboBoxItem>42</ComboBoxItem>
+                                                    <ComboBoxItem>43</ComboBoxItem>
+                                                    <ComboBoxItem>44</ComboBoxItem>
+                                                    <ComboBoxItem>45</ComboBoxItem>
+                                                    <ComboBoxItem>46</ComboBoxItem>
+                                                    <ComboBoxItem>47</ComboBoxItem>
+                                                    <ComboBoxItem>48</ComboBoxItem>
+                                                    <ComboBoxItem>49</ComboBoxItem>
+                                                    <ComboBoxItem>50</ComboBoxItem>
+                                                    <ComboBoxItem>51</ComboBoxItem>
+                                                    <ComboBoxItem>52</ComboBoxItem>
+                                                    <ComboBoxItem>53</ComboBoxItem>
+                                                    <ComboBoxItem>54</ComboBoxItem>
+                                                    <ComboBoxItem>55</ComboBoxItem>
+                                                    <ComboBoxItem>56</ComboBoxItem>
+                                                    <ComboBoxItem>57</ComboBoxItem>
+                                                    <ComboBoxItem>58</ComboBoxItem>
+                                                    <ComboBoxItem>59</ComboBoxItem>
+
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel Margin="20,0,0,0">
+                                            <TextBlock Text="End Time" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <ComboBox SelectedIndex="{Binding endHour, Mode=TwoWay}">
+                                                    <ComboBoxItem>0</ComboBoxItem>
+                                                    <ComboBoxItem>1</ComboBoxItem>
+                                                    <ComboBoxItem>2</ComboBoxItem>
+                                                    <ComboBoxItem>3</ComboBoxItem>
+                                                    <ComboBoxItem>4</ComboBoxItem>
+                                                    <ComboBoxItem>5</ComboBoxItem>
+                                                    <ComboBoxItem>6</ComboBoxItem>
+                                                    <ComboBoxItem>7</ComboBoxItem>
+                                                    <ComboBoxItem>8</ComboBoxItem>
+                                                    <ComboBoxItem>9</ComboBoxItem>
+                                                    <ComboBoxItem>10</ComboBoxItem>
+                                                    <ComboBoxItem>11</ComboBoxItem>
+                                                    <ComboBoxItem>12</ComboBoxItem>
+                                                    <ComboBoxItem>13</ComboBoxItem>
+                                                    <ComboBoxItem>14</ComboBoxItem>
+                                                    <ComboBoxItem>15</ComboBoxItem>
+                                                    <ComboBoxItem>16</ComboBoxItem>
+                                                    <ComboBoxItem>17</ComboBoxItem>
+                                                    <ComboBoxItem>18</ComboBoxItem>
+                                                    <ComboBoxItem>19</ComboBoxItem>
+                                                    <ComboBoxItem>20</ComboBoxItem>
+                                                    <ComboBoxItem>21</ComboBoxItem>
+                                                    <ComboBoxItem>22</ComboBoxItem>
+                                                    <ComboBoxItem>23</ComboBoxItem>
+                                                </ComboBox>
+                                                <ComboBox SelectedIndex="{Binding endMin, Mode=TwoWay}">
+                                                    <ComboBoxItem>0</ComboBoxItem>
+                                                    <ComboBoxItem>1</ComboBoxItem>
+                                                    <ComboBoxItem>2</ComboBoxItem>
+                                                    <ComboBoxItem>3</ComboBoxItem>
+                                                    <ComboBoxItem>4</ComboBoxItem>
+                                                    <ComboBoxItem>5</ComboBoxItem>
+                                                    <ComboBoxItem>6</ComboBoxItem>
+                                                    <ComboBoxItem>7</ComboBoxItem>
+                                                    <ComboBoxItem>8</ComboBoxItem>
+                                                    <ComboBoxItem>9</ComboBoxItem>
+                                                    <ComboBoxItem>10</ComboBoxItem>
+                                                    <ComboBoxItem>11</ComboBoxItem>
+                                                    <ComboBoxItem>12</ComboBoxItem>
+                                                    <ComboBoxItem>13</ComboBoxItem>
+                                                    <ComboBoxItem>14</ComboBoxItem>
+                                                    <ComboBoxItem>15</ComboBoxItem>
+                                                    <ComboBoxItem>16</ComboBoxItem>
+                                                    <ComboBoxItem>17</ComboBoxItem>
+                                                    <ComboBoxItem>18</ComboBoxItem>
+                                                    <ComboBoxItem>19</ComboBoxItem>
+                                                    <ComboBoxItem>20</ComboBoxItem>
+                                                    <ComboBoxItem>21</ComboBoxItem>
+                                                    <ComboBoxItem>22</ComboBoxItem>
+                                                    <ComboBoxItem>23</ComboBoxItem>
+                                                    <ComboBoxItem>24</ComboBoxItem>
+                                                    <ComboBoxItem>25</ComboBoxItem>
+                                                    <ComboBoxItem>26</ComboBoxItem>
+                                                    <ComboBoxItem>27</ComboBoxItem>
+                                                    <ComboBoxItem>28</ComboBoxItem>
+                                                    <ComboBoxItem>29</ComboBoxItem>
+                                                    <ComboBoxItem>30</ComboBoxItem>
+                                                    <ComboBoxItem>31</ComboBoxItem>
+                                                    <ComboBoxItem>32</ComboBoxItem>
+                                                    <ComboBoxItem>33</ComboBoxItem>
+                                                    <ComboBoxItem>34</ComboBoxItem>
+                                                    <ComboBoxItem>35</ComboBoxItem>
+                                                    <ComboBoxItem>36</ComboBoxItem>
+                                                    <ComboBoxItem>37</ComboBoxItem>
+                                                    <ComboBoxItem>38</ComboBoxItem>
+                                                    <ComboBoxItem>39</ComboBoxItem>
+                                                    <ComboBoxItem>40</ComboBoxItem>
+                                                    <ComboBoxItem>41</ComboBoxItem>
+                                                    <ComboBoxItem>42</ComboBoxItem>
+                                                    <ComboBoxItem>43</ComboBoxItem>
+                                                    <ComboBoxItem>44</ComboBoxItem>
+                                                    <ComboBoxItem>45</ComboBoxItem>
+                                                    <ComboBoxItem>46</ComboBoxItem>
+                                                    <ComboBoxItem>47</ComboBoxItem>
+                                                    <ComboBoxItem>48</ComboBoxItem>
+                                                    <ComboBoxItem>49</ComboBoxItem>
+                                                    <ComboBoxItem>50</ComboBoxItem>
+                                                    <ComboBoxItem>51</ComboBoxItem>
+                                                    <ComboBoxItem>52</ComboBoxItem>
+                                                    <ComboBoxItem>53</ComboBoxItem>
+                                                    <ComboBoxItem>54</ComboBoxItem>
+                                                    <ComboBoxItem>55</ComboBoxItem>
+                                                    <ComboBoxItem>56</ComboBoxItem>
+                                                    <ComboBoxItem>57</ComboBoxItem>
+                                                    <ComboBoxItem>58</ComboBoxItem>
+                                                    <ComboBoxItem>59</ComboBoxItem>
+
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel x:Name="WeekDaySelector" Margin="20,0,0,0">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding routineScheduleMode, Mode=OneWay}" Value="3">
+                                                            <Setter Property="IsEnabled" Value="True" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                            <TextBlock Text="Day Selector" />
+                                            <StackPanel Margin="0,0" Orientation="Horizontal">
+
+
+                                                <ToggleButton
+                                                    Margin="0,0,5,0"
+                                                    Content="Mon"
+                                                    IsChecked="{Binding daysActive[0], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Tue"
+                                                    IsChecked="{Binding daysActive[1], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Wed"
+                                                    IsChecked="{Binding daysActive[2], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Thu"
+                                                    IsChecked="{Binding daysActive[3], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Fri"
+                                                    IsChecked="{Binding daysActive[4], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Sat"
+                                                    IsChecked="{Binding daysActive[5], Mode=TwoWay}" />
+                                                <ToggleButton
+                                                    Margin="5,0"
+                                                    Content="Sun"
+                                                    IsChecked="{Binding daysActive[6], Mode=TwoWay}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Button
+                                            x:Name="DeleteTimeSlot"
+                                            Margin="50,0,0,0"
+                                            cal:Message.Attach="DeleteTimeSlot"
+                                            Background="#6D2A2A"
+                                            Content="Delete TimeSlot"
+                                            Foreground="#fff" />
+
+                                    </StackPanel>
+
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                    <TextBlock Text="Devices" />
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox ItemsSource="{Binding localdevices, Mode=OneWay}" SelectedItem="{Binding selectedDeviceToRoutine, Mode=OneWayToSource}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0,0,10,0" Text="{Binding deviceID}" />
+                                        <TextBlock Text="{Binding deviceName}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button x:Name="AddSelectedDeviceToRoutine" Content="Add Device To Routine" />
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding selectedRoutineDeviceIds}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=.}" />
+                                    <Button
+                                        x:Name="RemoveDeviceFromRoutine"
+                                        Margin="20,0"
+                                        HorizontalAlignment="Right"
+                                        cal:Message.Attach="[Event PreviewMouseUp] = [Action RemoveDeviceFromRoutine($source, $eventArgs)]"
+                                        Background="#6D2A2A"
+                                        Content="Remove From Routine"
+                                        Foreground="#fff"
+                                        Tag="{Binding Path=.}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <!--  Media Details  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="2"
+            Margin="10">
+            <TextBlock Foreground="#fff" Text="Media Pane" />
+
+            <Button x:Name="AddMediaSlot" Content="Add Media Slot" />
+            <ListView x:Name="MediaList" ItemsSource="{Binding mediaslots}">
+                <ListView.Resources>
+                    <my:DataContextSpy x:Key="dataContextSpy" />
+                </ListView.Resources>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <!--<Image
+                                    Width="64"
+                                    Height="64"
+                                    Source="{Binding runtimeImage}" />-->
+                                <ComboBox Loaded="ComboBox_Loaded" SelectedIndex="{Binding routineImageSlot, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="30"
+                                                    Margin="0,0,10,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding slotID}" />
+                                                <Image Source="{Binding image}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <StackPanel Grid.Column="1" Margin="10">
+                                    <!--<TextBlock Foreground="#fff" Text="{Binding routineSlotName}" />-->
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="0,0,5,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="#fff"
+                                            Text="Playback Time" />
+                                        <ComboBox Width="80" SelectedIndex="{Binding routineDisplayTime, Mode=TwoWay}">
+                                            <ComboBoxItem>0</ComboBoxItem>
+                                            <ComboBoxItem>1</ComboBoxItem>
+                                            <ComboBoxItem>2</ComboBoxItem>
+                                            <ComboBoxItem>3</ComboBoxItem>
+                                            <ComboBoxItem>4</ComboBoxItem>
+                                            <ComboBoxItem>5</ComboBoxItem>
+                                            <ComboBoxItem>6</ComboBoxItem>
+                                            <ComboBoxItem>7</ComboBoxItem>
+                                            <ComboBoxItem>8</ComboBoxItem>
+                                            <ComboBoxItem>9</ComboBoxItem>
+                                            <ComboBoxItem>10</ComboBoxItem>
+                                            <ComboBoxItem>11</ComboBoxItem>
+                                            <ComboBoxItem>12</ComboBoxItem>
+                                            <ComboBoxItem>13</ComboBoxItem>
+                                            <ComboBoxItem>14</ComboBoxItem>
+                                            <ComboBoxItem>15</ComboBoxItem>
+                                            <ComboBoxItem>16</ComboBoxItem>
+                                            <ComboBoxItem>17</ComboBoxItem>
+                                            <ComboBoxItem>18</ComboBoxItem>
+                                            <ComboBoxItem>19</ComboBoxItem>
+                                            <ComboBoxItem>20</ComboBoxItem>
+                                            <ComboBoxItem>21</ComboBoxItem>
+                                            <ComboBoxItem>22</ComboBoxItem>
+                                            <ComboBoxItem>23</ComboBoxItem>
+                                            <ComboBoxItem>24</ComboBoxItem>
+                                            <ComboBoxItem>25</ComboBoxItem>
+                                            <ComboBoxItem>26</ComboBoxItem>
+                                            <ComboBoxItem>27</ComboBoxItem>
+                                            <ComboBoxItem>28</ComboBoxItem>
+                                            <ComboBoxItem>29</ComboBoxItem>
+                                            <ComboBoxItem>30</ComboBoxItem>
+                                            <ComboBoxItem>31</ComboBoxItem>
+                                            <ComboBoxItem>32</ComboBoxItem>
+                                            <ComboBoxItem>33</ComboBoxItem>
+                                            <ComboBoxItem>34</ComboBoxItem>
+                                            <ComboBoxItem>35</ComboBoxItem>
+                                            <ComboBoxItem>36</ComboBoxItem>
+                                            <ComboBoxItem>37</ComboBoxItem>
+                                            <ComboBoxItem>38</ComboBoxItem>
+                                            <ComboBoxItem>39</ComboBoxItem>
+                                            <ComboBoxItem>40</ComboBoxItem>
+                                            <ComboBoxItem>41</ComboBoxItem>
+                                            <ComboBoxItem>42</ComboBoxItem>
+                                            <ComboBoxItem>43</ComboBoxItem>
+                                            <ComboBoxItem>44</ComboBoxItem>
+                                            <ComboBoxItem>45</ComboBoxItem>
+                                            <ComboBoxItem>46</ComboBoxItem>
+                                            <ComboBoxItem>47</ComboBoxItem>
+                                            <ComboBoxItem>48</ComboBoxItem>
+                                            <ComboBoxItem>49</ComboBoxItem>
+                                            <ComboBoxItem>50</ComboBoxItem>
+                                            <ComboBoxItem>51</ComboBoxItem>
+                                            <ComboBoxItem>52</ComboBoxItem>
+                                            <ComboBoxItem>53</ComboBoxItem>
+                                            <ComboBoxItem>54</ComboBoxItem>
+                                            <ComboBoxItem>55</ComboBoxItem>
+                                            <ComboBoxItem>56</ComboBoxItem>
+                                            <ComboBoxItem>57</ComboBoxItem>
+                                            <ComboBoxItem>58</ComboBoxItem>
+                                            <ComboBoxItem>59</ComboBoxItem>
+                                            <ComboBoxItem>60</ComboBoxItem>
+                                            <ComboBoxItem>61</ComboBoxItem>
+                                            <ComboBoxItem>62</ComboBoxItem>
+                                            <ComboBoxItem>63</ComboBoxItem>
+                                            <ComboBoxItem>64</ComboBoxItem>
+                                            <ComboBoxItem>65</ComboBoxItem>
+                                            <ComboBoxItem>66</ComboBoxItem>
+                                            <ComboBoxItem>67</ComboBoxItem>
+                                            <ComboBoxItem>68</ComboBoxItem>
+                                            <ComboBoxItem>69</ComboBoxItem>
+                                            <ComboBoxItem>70</ComboBoxItem>
+                                            <ComboBoxItem>71</ComboBoxItem>
+                                            <ComboBoxItem>72</ComboBoxItem>
+                                            <ComboBoxItem>73</ComboBoxItem>
+                                            <ComboBoxItem>74</ComboBoxItem>
+                                            <ComboBoxItem>75</ComboBoxItem>
+                                            <ComboBoxItem>76</ComboBoxItem>
+                                            <ComboBoxItem>77</ComboBoxItem>
+                                            <ComboBoxItem>78</ComboBoxItem>
+                                            <ComboBoxItem>79</ComboBoxItem>
+                                            <ComboBoxItem>80</ComboBoxItem>
+                                        </ComboBox>
+
+                                    </StackPanel>
+
+
+                                </StackPanel>
+                                <Button
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center"
+                                    Background="#6D2A2A"
+                                    Command="{Binding ElementName=MediaList, Path=DataContext.RemoveItemCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="&#xE74D;"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    Foreground="White"
+                                    PreviewMouseLeftButtonDown="removeItem_Click" />
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</UserControl>

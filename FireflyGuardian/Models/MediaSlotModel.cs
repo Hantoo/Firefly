@@ -12,6 +12,7 @@ namespace FireflyGuardian.Models
     {
         public string image_source { get; set; }
         public string image_name { get; set; }
+        public string image_symbol { get; set; }
         public int slotID { get; set; }
         public BitmapImage image { get; set; }
     }

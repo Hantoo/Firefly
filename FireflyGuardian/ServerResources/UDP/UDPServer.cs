@@ -106,7 +106,13 @@ namespace FireflyGuardian.ServerResources.UDP
                     if (sendDataQueue.Count > 0)
                     {
                         messageToSend = sendDataQueue.Dequeue();
-                        udpClient.Send(messageToSend.data, messageToSend.data.Length, messageToSend.ipData);
+                        if (messageToSend != null)
+                        {
+                            if (messageToSend.data != null && messageToSend.ipData != null)
+                            {
+                                udpClient.Send(messageToSend.data, messageToSend.data.Length, messageToSend.ipData);
+                            }
+                        }
                     }
                 }
                 catch (Exception e)

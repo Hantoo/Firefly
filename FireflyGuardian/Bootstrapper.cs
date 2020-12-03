@@ -27,9 +27,8 @@ namespace FireflyGuardian
         protected override void OnExit(object sender, EventArgs e)
         {
             //Shutsdown recieving thread for UDP server. Otherwise program will constantly run on thread.
-            ServerResources.UDP.UDPServer.shutdownUDP();
-            string JSONresult = JsonConvert.SerializeObject(ServerManagement.settings);
-            ServerResources.DataAccess.Init.updateJson(JSONresult);
+            
+            ServerManagement.stopAll();
             base.OnExit(sender, e);
         }
     }

@@ -26,11 +26,13 @@
             MouseMove="Canvas_MouseMove"
             MouseUp="Canvas_MouseUp">
             <Canvas.RenderTransform>
+
                 <TransformGroup>
                     <ScaleTransform x:Name="st" />
                     <TranslateTransform x:Name="translate" />
                 </TransformGroup>
             </Canvas.RenderTransform>
+
         </Canvas>
         <StackPanel
             Grid.Row="1"
@@ -66,15 +68,15 @@
             </Button>
 
             <Button
-                x:Name="nodeoveButton"
+                x:Name="RefreshMap"
                 Margin="10,0,0,0"
                 Padding="10,0,10,0"
                 Background="#303030"
                 BorderThickness="0"
-                Content="&#xE759;"
+                Content="&#xE72C;"
                 FontFamily="Segoe MDL2 Assets"
-                PreviewMouseLeftButtonDown="Node_Drag"
-                ToolTip="Move Node Toggle"
+                PreviewMouseLeftButtonDown="refreshImageOnNodes"
+                ToolTip="Refresh Nodes"
                 ToolTipService.BetweenShowDelay="500"
                 ToolTipService.InitialShowDelay="2000"
                 ToolTipService.ShowDuration="4000">
@@ -82,14 +84,14 @@
                     <Style>
                         <Setter Property="Button.Foreground" Value="#646464" />
 
-                        <Style.Triggers>
+                        <!--<Style.Triggers>
                             <DataTrigger Binding="{Binding nodeDrag}" Value="True">
                                 <Setter Property="Button.Foreground" Value="#FFB300" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding nodeDrag}" Value="False">
                                 <Setter Property="Button.Foreground" Value="#646464" />
                             </DataTrigger>
-                        </Style.Triggers>
+                        </Style.Triggers>-->
                     </Style>
                 </Button.Style>
             </Button>

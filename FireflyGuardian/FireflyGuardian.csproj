@@ -40,10 +40,12 @@
     <ApplicationIcon>UIResources\Images\ApplicationResources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.Shell.15.0, Version=16.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="netstandard" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -65,11 +67,13 @@
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\MediaSlotModel.cs" />
     <Compile Include="Models\PageModel.cs" />
+    <Compile Include="Models\RoutineModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\udpDataModel.cs" />
     <Compile Include="ServerResources\DataAccess\FTPAccess.cs" />
     <Compile Include="ServerResources\DataAccess\Init.cs" />
     <Compile Include="ServerResources\DataAccess\json.cs" />
+    <Compile Include="ServerResources\LocalServer.cs" />
     <Compile Include="ServerResources\NodeRouting.cs" />
     <Compile Include="ServerResources\ServerManagement.cs" />
     <Compile Include="ServerResources\UDP\UDPMessageRouting.cs" />
@@ -77,11 +81,13 @@
     <Compile Include="ServerResources\UDP\UDPServer.cs" />
     <Compile Include="ServerResources\utils.cs" />
     <Compile Include="UIResources\Scripts\InterfaceManagement.cs" />
+    <Compile Include="UIResources\Scripts\MultiStyleExtension.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
     <Compile Include="ViewModels\DeviceNetworkViewModel.cs" />
     <Compile Include="ViewModels\DeviceNodeGraphViewModel.cs" />
     <Compile Include="ViewModels\InitSetupWindowViewModel.cs" />
     <Compile Include="ViewModels\MediaPoolViewModel.cs" />
+    <Compile Include="ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\DashboardView.xaml.cs">
@@ -98,6 +104,9 @@
     </Compile>
     <Compile Include="Views\MediaPoolView.xaml.cs">
       <DependentUpon>MediaPoolView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScheduleView.xaml.cs">
+      <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -135,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MediaPoolView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScheduleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -189,6 +202,12 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
     </PackageReference>
+    <PackageReference Include="Prism.Core">
+      <Version>8.0.0.1909</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.Compression">
+      <Version>4.3.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="UIResources\Images\SplashScreen2.png" />
@@ -212,10 +231,37 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\9.png" />
+    <None Include="Resources\NoImage.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\NoImage.png" />
+    <EmbeddedResource Include="Resources\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\10.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

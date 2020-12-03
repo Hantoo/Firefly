@@ -35,7 +35,11 @@ namespace FireflyGuardian.ServerResources.UDP
                     case 0xA9:
                         returnServerInfomation(udpModel.altIPData);
                         break;
-                }
+
+                case 0xA1:
+                    Heartbeat(udpModel.altIPData);
+                    break;
+            }
             //}
         }
 
@@ -62,6 +66,24 @@ namespace FireflyGuardian.ServerResources.UDP
             
 
             //for(int i = 0;)
+        }
+
+        public void Heartbeat(IPEndPoint ipData)
+        {
+
+            IPAddress address = ipData.Address;
+            if(ServerManagement.devices.Count > 0)
+            {
+                for(int i =0; i < ServerManagement.devices.Count; i++)
+                {
+                    
+                    if(ServerManagement.devices[i].deviceIP == address.ToString())
+                    {
+                        ServerManagement.devices[i].hasHeartBeat = true;
+                        ServerManagement.devices[i].heartbeatRefreshCount = 0;
+                    }
+                }
+            }
         }
 
         public void returnServerInfomation(IPEndPoint ipData)

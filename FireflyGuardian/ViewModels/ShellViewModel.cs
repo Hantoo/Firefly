@@ -19,19 +19,20 @@ namespace FireflyGuardian.ViewModels
        /* private static UDPConnectionModel _uDPConnection;
         public static UDPConnectionModel udpConnection { get { return _uDPConnection; } }
         public static SettingsModel settings;*/
+        public bool openMenu { get; set; }
         public int menuWidth { get; set; }
         public BindableCollection<PageModel> _pages = new BindableCollection<PageModel>();
         public static event NotifyDestroyCurrentView NotfiyDestoryView;
         public static event NotifyCreatedCurrentView NotfiyNewView;
         public static Type activePageType;
-        DashboardViewModel DashboardPage = new DashboardViewModel();
-        DeviceNetworkViewModel DeivceNetworkViewPage = new DeviceNetworkViewModel();
-        MediaPoolViewModel MediaPoolPage = new MediaPoolViewModel();
-        SettingsViewModel SettingsPage = new SettingsViewModel();
+        DashboardViewModel DashboardPage;
+        DeviceNetworkViewModel DeivceNetworkViewPage;
+        MediaPoolViewModel MediaPoolPage;
+        SettingsViewModel SettingsPage;
+        ScheduleViewModel SchedulePage;
         public ShellViewModel()
         {
-            generatePages();
-            ActivateItem(Pages[0].View);
+            
             StartUpView();
 
         }
@@ -49,6 +50,8 @@ namespace FireflyGuardian.ViewModels
             }
             else
             {
+                generatePages();
+                ActivateItem(Pages[0].View);
                 ExitSetupView();
             }
         }
@@ -64,11 +67,16 @@ namespace FireflyGuardian.ViewModels
 
         public void generatePages()
         {
+             DashboardPage = new DashboardViewModel();
+            DeivceNetworkViewPage = new DeviceNetworkViewModel();
+            MediaPoolPage = new MediaPoolViewModel();
+            SettingsPage = new SettingsViewModel();
+            SchedulePage = new ScheduleViewModel();
             Pages.Add(new PageModel { icon = "\uF404", name = "Dashboard", reloadOnActive = false, View = DashboardPage }); ;
             Pages.Add(new PageModel { icon = "\uF0B9", name = "Device Network", reloadOnActive = false, View = DeivceNetworkViewPage });
             Pages.Add(new PageModel { icon = "\uEC51", name = "File Management", reloadOnActive = true, View = MediaPoolPage });
-            Pages.Add(new PageModel { icon = "\uE823", name = "Schedule", reloadOnActive = false });
-            Pages.Add(new PageModel { icon = "\uE713", name = "Settings", reloadOnActive = false, View = SettingsPage }); //View = new SettingsViewModel()
+            Pages.Add(new PageModel { icon = "\uE823", name = "Schedule", reloadOnActive = true, View = SchedulePage });
+            Pages.Add(new PageModel { icon = "\uE713", name = "Settings", reloadOnActive = true, View = SettingsPage }); //View = new SettingsViewModel()
         }
 
         public BindableCollection<PageModel> Pages
@@ -88,22 +96,32 @@ namespace FireflyGuardian.ViewModels
               
                 NotifyOfPropertyChange(() => SelectedPage);
                 NotifyOfPropertyChange(() => Pages);
+                openMenu = false;
+                NotifyOfPropertyChange(() => openMenu);
                 PageSwitch(_pageModel);
             }
         }
 
+
+        public void MenuBurger()
+        {
+            openMenu = !openMenu;
+            NotifyOfPropertyChange(() => openMenu);
+            Console.WriteLine("Log");
+        }
 
 
         #region PageNavigation
         /* When a page is switched on the page menu at the side of the screen, this function is triggered
          * It then triggers the PageSwitch method which loads the model view of the page into the active Item
          * to be displayed */
-        
+
         public void PageSwitch(PageModel activePage)
         {
             NotfiyDestoryView.Invoke();
             //If page does not need a active reload, load the same page that was generated at the start of the program
             //else, get the type of the page, and generate a new instance of the page
+           
             if (!activePage.reloadOnActive)
             {
                 

@@ -33,7 +33,7 @@ namespace FireflyGuardian.ViewModels
     class DeviceNetworkViewModel : Screen
     {
         private BindableCollection<DeviceModel> _deviceList = new BindableCollection<DeviceModel>();
-        public BindableCollection<DeviceModel> deviceList { get { return _deviceList; } }
+        public BindableCollection<DeviceModel> deviceList { get { return _deviceList; } set { _deviceList = value; } }
         public static event NotifyCanvasRefresh RefreshCanvas;
         public static event NotifyDeviceViewModelDestory DestroyCanvas;
         private NodeRouting routes;
@@ -45,6 +45,17 @@ namespace FireflyGuardian.ViewModels
         DeviceNodeGraphViewModel nodeGraph;
         public bool canvasDraga { get; set; }
         public bool nodeDrag { get; set; }
+        
+        public int defaultImageSlot { get { if (SelectedDevice != null) { return SelectedDevice.defaultImage; Console.WriteLine("Selected Device Exists"); } else { return 0; } } 
+                                      set { if (SelectedDevice != null) { Console.WriteLine("Selected Device Exists"); SelectedDevice.defaultImage = value; NotifyOfPropertyChange(() => SelectedDevice); } } }
+        private int _selectedDeviceIndex;
+        private DeviceModel _SelectedDevice;
+        public BindableCollection<DeviceModel> _SelectedDeviceConnections = new BindableCollection<DeviceModel>();
+        public BindableCollection<DeviceModel> SelectedDeviceConnections { get { return _SelectedDeviceConnections; } }
+
+        public double deviceLocationX { get; set; }
+        public double deviceLocationZ { get; set; }
+        public int routingType { get; set; }
         //public bool nodeDrag { get { return nodeDrag; } set { nodeDrag = value; if (value == true) { canvasDraga = false; } } }
         //public bool canvasDraga { get { return canvasDraga; } set { canvasDraga = value; if (value == true) { nodeDrag = false; } } }
         //public object NodeGraphViewModelView { get; set; }// = new DeviceNodeGraphViewModel();
@@ -59,6 +70,7 @@ namespace FireflyGuardian.ViewModels
             FireflyGuardian.Views.DeviceNodeGraphView.UserToggledCanvasDrag += toggleUserCanvasDrag;
             FireflyGuardian.Views.DeviceNodeGraphView.UserToggledNodeDrag += toggleUserNodeDrag;
             FireflyGuardian.Views.DeviceNodeGraphView.UserSelectedNode += setSelectedDeviceFromGraph;
+            FireflyGuardian.Views.DeviceNodeGraphView.AutoUpdateList += autoUpdateList;
             FireflyGuardian.ViewModels.ShellViewModel.NotfiyNewView += ViewScreen;
             FireflyGuardian.ViewModels.ShellViewModel.NotfiyDestoryView += DestoryScreen;
             
@@ -78,9 +90,44 @@ namespace FireflyGuardian.ViewModels
             {
                 DestroyCanvas.Invoke();
             }
+
         }
 
-     
+        public static void GlobalDestroyNodeCanvas()
+        {
+            try
+            {
+                if(DestroyCanvas != null)
+                DestroyCanvas.Invoke();
+            }
+            catch { }
+        }
+
+        public void DeactivateNode()
+        {
+           
+            
+            SelectedDevice.flagEmergencyAtNode = !SelectedDevice.flagEmergencyAtNode;
+            if (SelectedDevice.flagEmergencyAtNode)
+            {
+                SelectedDevice.activeImageSlot = 9;
+            }
+            else
+            {
+                SelectedDevice.activeImageSlot = 0;
+            }
+            RefreshCanvas.Invoke();
+        }
+
+        public void resetAllNodes()
+        {
+            for(int i = 0; i< ServerManagement.devices.Count; i++)
+            {
+                ServerManagement.devices[i].flagEmergencyAtNode = false;
+            }
+        }
+
+
         public void toggleUserCanvasDrag()
         {
             canvasDraga = !canvasDraga;
@@ -99,23 +146,16 @@ namespace FireflyGuardian.ViewModels
         private void updateDeviceListWindow()
         {
             _deviceList.Clear();
-            
-            for (int i = 0; i < ServerResources.ServerManagement.devices.Count; i++)
-            {
-                _deviceList.Add(ServerResources.ServerManagement.devices[i]);
-            }
+            deviceList = new BindableCollection<DeviceModel>(ServerResources.ServerManagement.devices);
+            //for (int i = 0; i < ServerResources.ServerManagement.devices.Count; i++)
+            //{
+            //    _deviceList.Add(ServerResources.ServerManagement.devices[i]);
+            //}
             NotifyOfPropertyChange(() => _deviceList);
             NotifyOfPropertyChange(() => deviceList);
             RefreshCanvas?.Invoke();
         }
-        private int _selectedDeviceIndex;
-        private DeviceModel _SelectedDevice;
-        public BindableCollection<DeviceModel> _SelectedDeviceConnections = new BindableCollection<DeviceModel>();
-        public BindableCollection<DeviceModel> SelectedDeviceConnections { get { return _SelectedDeviceConnections;  }}
-
-        public double deviceLocationX { get; set; }
-        public double deviceLocationZ { get; set; }
-        public int routingType { get; set; }
+        
         public DeviceModel SelectedDevice
         {
             get { return _SelectedDevice; }
@@ -136,6 +176,8 @@ namespace FireflyGuardian.ViewModels
                     }
                     
                 }
+                defaultImageSlot = SelectedDevice.defaultImage;
+                NotifyOfPropertyChange(() => defaultImageSlot);
                 //Take double and split to single ints
                 deviceLocationX = SelectedDevice.deviceXZLocationOnGrid.Item1;
                 deviceLocationZ = SelectedDevice.deviceXZLocationOnGrid.Item2;
@@ -228,6 +270,7 @@ namespace FireflyGuardian.ViewModels
             deviceList[selectedIndex] = SelectedDevice;
             SelectedDevice = deviceList[selectedIndex];
             selectedDeviceIndex = selectedIndex;
+            RefreshCanvas.Invoke();
         }
 
         public void AddToAdjacencyList()
@@ -246,11 +289,12 @@ namespace FireflyGuardian.ViewModels
         {
 
             SelectedDevice.isExit = !SelectedDevice.isExit;
+            
             flagAsChangeToDeviceStructure("Path Recalculation Needed For New Exit Node");
             NotifyOfPropertyChange(() => SelectedDevice);
             updateDeviceListWindow();
         }
-
+        
 
 
         //SAVE AND LOAD 
@@ -258,44 +302,42 @@ namespace FireflyGuardian.ViewModels
         private SaveFileDialog saveFileDialog;
         Nullable<bool> hasFile;
         //Get JSON file and load it into the ServerManagement Variable for Devices.
-        public void loadDevicesFromJson()
-        {
-            openFileDialog = new OpenFileDialog();
-            // Launch OpenFileDialog by calling ShowDialog method
-            openFileDialog.Filter = "JSON Files |*.json;";
-            hasFile = openFileDialog.ShowDialog();
-            // Get the selected file name and display in a TextBox.
-            // Load content of file in a TextBlock
-            if (hasFile == true)
-            {
-
-                hasFile = false;
-                string json = File.ReadAllText(openFileDialog.FileName);
-                List<DeviceModel> deviceListFromFile = new List<DeviceModel>();
-                deviceListFromFile = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DeviceModel>>(json);
-                ServerResources.ServerManagement.devices = deviceListFromFile;
-
-                updateDeviceListWindow();
-               
-            }
-            
-        }
-
-
+        
         //Save the ServerManagement variable to 
         public void saveDevicesToJson()
         {
-            saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "JSON Files |*.json;";
-            saveFileDialog.ShowDialog();
             
-            json.saveDevices(saveFileDialog.FileName);
+            json.saveDevices();
         }
 
 
+        public void ToggleHeart()
+        {
+            ServerManagement.devices[0].hasHeartBeat = true;
+           
+        }
 
+        public void autoUpdateList()
+        {
 
+            deviceList = new BindableCollection<DeviceModel>(ServerManagement.devices);
+            NotifyOfPropertyChange(() => deviceList);
 
+            //If heartbeats have been checked then turn them off.
+            for (int i = 0; i < ServerManagement.devices.Count; i++)
+            {
+                if (ServerManagement.devices[i].hasHeartBeat)
+                {
+                    if (ServerManagement.devices[i].heartbeatRefreshCount > 50)
+                    {
+                        ServerManagement.devices[i].hasHeartBeat = false;
+                        ServerManagement.devices[i].heartbeatRefreshCount = 0;
+                    }
+                    else { ServerManagement.devices[i].heartbeatRefreshCount++; }
+
+                }
+            }
+        }
         //Routing 
 
         //Calculate Distance Between Nodes
@@ -321,7 +363,10 @@ namespace FireflyGuardian.ViewModels
         {
             if(routes != null)
             {
+                ServerManagement.ShouldEvacuate();
                 routes.Evacuate();
+                RefreshCanvas.Invoke();
+                
             }
             else
             {

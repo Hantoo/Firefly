@@ -28,6 +28,15 @@
                     ClipToBounds="True"
                     Source="pack://application:,,,/UIResources/Images/WelcomeScreen.png"
                     Stretch="UniformToFill" />
+                <Button
+                    x:Name="LoadFromFile"
+                    HorizontalAlignment="Center"
+                    Content="LOAD FROM FILE" />
+                <TextBlock
+                    Margin="20"
+                    HorizontalAlignment="Center"
+                    Text="OR"
+                    TextWrapping="Wrap" />
                 <TextBlock Text="Hello. Welcome To FireFly. It looks like this is a new install of FireFly, so please fill in the below infomation so that we can automatically set up the enviroment for you!" TextWrapping="Wrap" />
                 <TextBlock
                     Margin="0,20,0,0"

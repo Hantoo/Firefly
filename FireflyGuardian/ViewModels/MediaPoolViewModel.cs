@@ -17,18 +17,96 @@ using System.Windows.Media.Imaging;
 
 namespace FireflyGuardian.ViewModels
 {
+    public enum statusState
+    {
+        Good,
+        Warning,
+        Error
+    };
+
     class MediaPoolViewModel :Screen
     {
         public List<MediaSlotModel> mediaSlots { get; set; }
         private MediaSlotModel _SelectedImageSlot;
         public MediaSlotModel SelectedImageSlot { get { return _SelectedImageSlot; } set { _SelectedImageSlot = value; if (_SelectedImageSlot.slotID <= 10) { showMediaUploadButton = "Hidden"; } else { showMediaUploadButton = "Visible"; } NotifyOfPropertyChange(() => SelectedImageSlot); NotifyOfPropertyChange(() => showMediaUploadButton); } }
         public string showMediaUploadButton { get; set; }
+        public bool renameMediaButton { get; set; }
+        public string mediaSlotName { get; set; }
+
         public MediaPoolViewModel()
         {
-            
-            //verifyMedia();
+           
             RefreshMediaSlots();
         }
+
+        #region statusBanner
+        public bool showStatus { get; set; }
+        public string statusMessage { get; set; }
+        public FireflyGuardian.ViewModels.statusState statusStateIndicator { get; set; }
+        public void changeStatusBackGround(statusState state)
+        {
+            statusStateIndicator = state;
+            NotifyOfPropertyChange(() => statusStateIndicator);
+           
+        }
+
+        public async void ShowStatus(string message, int timeShown, statusState state)
+        {
+            changeStatusBackGround(state);
+            await PutTaskDelay(message, timeShown);
+        }
+
+        async Task PutTaskDelay(string msg,int timeout)
+        {
+            showStatus = true;
+            NotifyOfPropertyChange(() => showStatus);
+            statusMessage = msg;
+            NotifyOfPropertyChange(() => statusMessage);
+            await Task.Delay(timeout);
+            showStatus = false;
+            NotifyOfPropertyChange(() => showStatus);
+            await Task.Delay(500);
+            statusMessage = "";
+            NotifyOfPropertyChange(() => statusMessage);
+        }
+
+        #endregion
+
+
+        //Renaming Of Slot
+        //Only changes the name locally stored within ServerManagement.Settings variable
+        //Does not change the name of the actual file type as this could cause more work
+        //When trying to download the files onto the node devices
+        #region Rename Slot
+        public void RenameImage()
+        {
+            if (SelectedImageSlot.slotID < 11)
+            {
+                return;
+            }
+            renameMediaButton = true;
+            NotifyOfPropertyChange(() => renameMediaButton);
+            
+        }
+
+        public void renameImageConfirm()
+        {
+            renameMediaButton = false;
+            NotifyOfPropertyChange(() => renameMediaButton);
+            ServerManagement.settings.slotNames[SelectedImageSlot.slotID] = mediaSlotName;
+            mediaSlotName = "";
+            NotifyOfPropertyChange(() => mediaSlotName);
+            RefreshMediaSlots();
+        }
+        public void renameImageCancel()
+        {
+            renameMediaButton = false;
+            NotifyOfPropertyChange(() => renameMediaButton);
+            mediaSlotName = "";
+            NotifyOfPropertyChange(() => mediaSlotName);
+        }
+        #endregion
+
 
         public void RefreshMediaSlots()
         {
@@ -40,21 +118,34 @@ namespace FireflyGuardian.ViewModels
                 updateSelected = true;
             }
             mediaSlots = new List<MediaSlotModel>();
-            
+           
             if (ServerManagement.settings == null) { Console.WriteLine("No Settings"); return; }
+            Console.WriteLine("Generate :" + ServerManagement.settings.absoluteLocationOfLocalisedMedia);
             for (int i = 0; i < 255; i++)
             {
                 MediaSlotModel slot = new MediaSlotModel();
                 slot.slotID = i;
                 if (File.Exists(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png"))
                 {
-                    slot.image_name = i+".png";
-                    slot.image = BitmapToImageSource(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png");
+                    if(i < 21)
+                    {
+                        slot.image_symbol = "\uE72E";
+                    }
+                    if (ServerManagement.settings.slotNames[i] != null)
+                    {
+                        slot.image_name = ServerManagement.settings.slotNames[i];
+                    }
+                    else
+                    {
+                        
+                        slot.image_name = ServerManagement.settings.slotNames[i];
+                    }
+                    slot.image = utils.BitmapToImageSource(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png");
                     //slot.image_source = ;
                 }
                 else
                 {
-                    
+                    ServerManagement.settings.slotNames[i] = "";
                     slot.image_name = "No Media";
                 }
                 mediaSlots.Add(slot);
@@ -64,30 +155,25 @@ namespace FireflyGuardian.ViewModels
                 SelectedImageSlot = mediaSlots[selectedidx];
             }
             NotifyOfPropertyChange(() => mediaSlots);
+            ServerManagement.mediaSlots = mediaSlots;
         }
 
-        BitmapImage BitmapToImageSource(string bitmaplocation)
-        {
-
-            Bitmap bitmap = new Bitmap(Image.FromFile(bitmaplocation));
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-                bitmap.Dispose();
-                return bitmapimage;
-            }
-            
-        }
+        
 
         public void SyncLocalToFTP()
         {
-            FTPAccess.syncLocalisedMediaPoolToFTPServer();
+            Console.WriteLine(ServerManagement.settings.ftpURL + ", " + ServerManagement.settings.ftpUsername + ", " + ServerManagement.settings.ftpPassword);
+            if (FTPAccess.VerifyConnection(ServerManagement.settings.ftpURL, ServerManagement.settings.ftpUsername, ServerManagement.settings.ftpPassword))
+            {
+                Console.WriteLine("Connection Established");
+                FTPAccess.syncLocalisedMediaPoolToFTPServer();
+                ShowStatus("Synced To FTP", 3000, statusState.Good);
+            }
+            else
+            {
+                FTPAccess.syncLocalisedMediaPoolToFTPServer();
+                ShowStatus("Can't Connect To FTP Server", 5000, statusState.Error);
+            }
         }
 
         public void replaceImage()
@@ -95,52 +181,27 @@ namespace FireflyGuardian.ViewModels
             OpenFileDialog fileUpload = new OpenFileDialog();
             fileUpload.Filter = ".png Files | *.png";
             fileUpload.ShowDialog();
-            Image upload = Image.FromFile(fileUpload.FileName);
-            //If file is not correct size then rescale the image to be the correct size.
-            if (upload.Width != 64 || upload.Height != 64)
+            if (fileUpload.FileName != null)
             {
-                Image img = Resize(Image.FromFile(fileUpload.FileName), 64, 64);
-                img.Save(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png");
+                Image upload = Image.FromFile(fileUpload.FileName);
+                //If file is not correct size then rescale the image to be the correct size.
+                if (upload.Width != 64 || upload.Height != 64)
+                {
+                    Image img = utils.Resize(Image.FromFile(fileUpload.FileName), 64, 64);
+
+                    img.Save(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png");
+                }
+                else
+                {
+                    File.Copy(fileUpload.FileName, ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png", true);
+                }
+                SelectedImageSlot.image_source = ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png";
+                SelectedImageSlot.image_name = SelectedImageSlot.slotID + ".png";
+                NotifyOfPropertyChange(() => SelectedImageSlot);
+                RefreshMediaSlots();
             }
-            else
-            {
-                File.Copy(fileUpload.FileName, ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png", true);
-            }
-            SelectedImageSlot.image_source = ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + SelectedImageSlot.slotID + ".png";
-            SelectedImageSlot.image_name = SelectedImageSlot.slotID + ".png";
-            NotifyOfPropertyChange(() => SelectedImageSlot);
-            RefreshMediaSlots();
         }
 
-        //https://stackoverflow.com/questions/17441098/how-to-resize-image-with-different-resolution
-        public Image Resize(Image originalImage, int w, int h)
-        {
-            //Original Image attributes
-            int originalWidth = originalImage.Width;
-            int originalHeight = originalImage.Height;
-
-            // Figure out the ratio
-            double ratioX = (double)w / (double)originalWidth;
-            double ratioY = (double)h / (double)originalHeight;
-            // use whichever multiplier is smaller
-            double ratio = ratioX < ratioY ? ratioX : ratioY;
-
-            // now we can get the new height and width
-            int newHeight = Convert.ToInt32(originalHeight * ratio);
-            int newWidth = Convert.ToInt32(originalWidth * ratio);
-
-            Image thumbnail = new Bitmap(newWidth, newHeight);
-            Graphics graphic = Graphics.FromImage(thumbnail);
-
-            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphic.SmoothingMode = SmoothingMode.HighQuality;
-            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.CompositingQuality = CompositingQuality.HighQuality;
-
-            graphic.Clear(Color.Transparent);
-            graphic.DrawImage(originalImage, 0, 0, newWidth, newHeight);
-
-            return thumbnail;
-        }
+        
     }
 }

@@ -13,6 +13,15 @@ namespace FireflyGuardian.Models
         public string ftpPassword { get; set; }
         public string absoluteLocationOfAppData { get; set; }
         public string absoluteLocationOfLocalisedMedia { get; set; }
-        
+        public string locationOfVenueDiagram { get; set; }
+        public double VenueDiagramScaleMultipler { get; set; }
+        public string[] slotNames { get; set; }
+        public int globalbrightness { get; set; }
+
+        public SettingsModel()
+        {
+            slotNames = new string[255];
+            VenueDiagramScaleMultipler = 1;
+        }
     }
 }

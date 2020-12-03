@@ -5,22 +5,173 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:FireflyGuardian.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="clr-namespace:FireflyGuardian.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="WarningHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#8A7B66" />
+                <GradientStop Offset="1" Color="#8A7B66" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GoodHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#57BE3B" />
+                <GradientStop Offset="0.55" Color="#46BE3B" />
+                <GradientStop Offset="0.55" Color="#1E7227" />
+                <GradientStop Offset="1" Color="#0F8015" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="ErrorHatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#BE3B3B" />
+                <GradientStop Offset="0.55" Color="#BE3B3B" />
+                <GradientStop Offset="0.55" Color="#8A7B66" />
+                <GradientStop Offset="1" Color="#8A7B66" />
+            </LinearGradientBrush>
+            <Style x:Key="statusHeading" TargetType="{x:Type StackPanel}">
+                <Style.Resources />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Warning}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource WarningHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Good}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource GoodHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding statusStateIndicator}" Value="{x:Static my:statusState.Error}">
+                        <DataTrigger.Setters>
+                            <Setter Property="Background" Value="{StaticResource ErrorHatchBrush}" />
+                        </DataTrigger.Setters>
+                    </DataTrigger>
+
+                    <DataTrigger Binding="{Binding showStatus}" Value="True">
+
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="60"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="0"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
-        <StackPanel MaxWidth="200">
-            <TextBlock Foreground="#fff" Text="FTP IP" />
-            <TextBox x:Name="FTP_IP" Text="{Binding FTP_IP, Mode=TwoWay}" />
-            <TextBlock Foreground="#fff" Text="FTP USERNAME" />
-            <TextBox x:Name="FTP_User" Text="{Binding FTP_User, Mode=TwoWay}" />
-            <TextBlock Foreground="#fff" Text="FTP PASSWORD" />
-            <TextBox x:Name="FTP_Pass" Text="{Binding FTP_Pass, Mode=TwoWay}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Left">
             <Button
                 x:Name="SaveFTP"
                 Margin="30,10,0,0"
-                Content="SAVE FTP SETTINGS"
+                HorizontalAlignment="Center"
+                Content="SAVE SETTINGS"
                 Foreground="#fff" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            MaxHeight="0"
+            Style="{StaticResource statusHeading}">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock FontWeight="Bold" Text="{Binding statusMessage}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel Width="200" HorizontalAlignment="Center">
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#fff"
+                        Text="FTP Settings" />
+                    <TextBlock Foreground="#fff" Text="FTP IP" />
+                    <TextBox x:Name="FTP_IP" Text="{Binding FTP_IP, Mode=TwoWay}" />
+                    <TextBlock Foreground="#fff" Text="FTP USERNAME" />
+                    <TextBox x:Name="FTP_User" Text="{Binding FTP_User, Mode=TwoWay}" />
+                    <TextBlock Foreground="#fff" Text="FTP PASSWORD" />
+                    <TextBox x:Name="FTP_Pass" Text="{Binding FTP_Pass, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel
+                    Width="300"
+                    Margin="50,0"
+                    HorizontalAlignment="Center">
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#fff"
+                        Text="Node Diagram Settings" />
+                    <TextBlock Foreground="#fff" Text="Venue Diagram Image Location" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox
+                            x:Name="NodeDiagramLayoutView"
+                            Width="200"
+                            Text="{Binding NodeDiagramLayoutView, Mode=TwoWay}" />
+                        <Button
+                            x:Name="chooseNewNodeDiagramFile"
+                            Width="100"
+                            Content="Replace File"
+                            Foreground="#fff" />
+                    </StackPanel>
+                    <TextBlock Foreground="#fff" Text="Venue Diagram Scale Multipler" />
+                    <TextBox
+                        x:Name="VenueDiagramScaleMultipler"
+                        Width="100"
+                        HorizontalAlignment="Left"
+                        Text="{Binding VenueDiagramScaleMultipler, Mode=TwoWay}" />
+
+                    <StackPanel
+                        Width="300"
+                        Margin="0,30,0,0"
+                        HorizontalAlignment="Left">
+                        <TextBlock
+                            FontWeight="Bold"
+                            Foreground="#fff"
+                            Text="Node Settings" />
+                        <TextBlock Foreground="#fff" Text="Global Brightness (0-255)" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox
+                                x:Name="NodeGlobalBrightness"
+                                Width="80"
+                                Text="{Binding NodeGlobalBrightness, Mode=TwoWay}" />
+                            <Button
+                                x:Name="updateNodeGlobalBrightness"
+                                Width="180"
+                                Content="Push Global Brightness"
+                                Foreground="#fff" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+
         </StackPanel>
     </Grid>
 </UserControl>

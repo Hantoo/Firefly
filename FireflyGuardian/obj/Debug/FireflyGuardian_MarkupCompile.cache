@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\App.xaml
-8-198011010
+9590393313
 
-35948969881
-212576263684
-MainWindow.xaml;Views\DashboardView.xaml;Views\DeviceNetworkView.xaml;Views\DeviceNodeGraphView.xaml;Views\InitSetupWindowView.xaml;Views\MediaPoolView.xaml;Views\SettingsView.xaml;Views\ShellView.xaml;
+40-1695281226
+216-125907525
+MainWindow.xaml;Views\DashboardView.xaml;Views\DeviceNetworkView.xaml;Views\DeviceNodeGraphView.xaml;Views\InitSetupWindowView.xaml;Views\MediaPoolView.xaml;Views\ScheduleView.xaml;Views\SettingsView.xaml;Views\ShellView.xaml;
 uiresources\images\splashscreen2.png
 False
 

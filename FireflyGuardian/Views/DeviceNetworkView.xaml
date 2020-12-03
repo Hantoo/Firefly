@@ -9,20 +9,56 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type local:DeviceNodeGraphView}">
-            <local:DeviceNodeGraphView />
-        </DataTemplate>
-        <LinearGradientBrush x:Key="HatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
-            <GradientStop Offset="0" Color="#BE9F3B" />
-            <GradientStop Offset="0.55" Color="#BE9F3B" />
-            <GradientStop Offset="0.55" Color="#8A7B66" />
-            <GradientStop Offset="1" Color="#8A7B66" />
-        </LinearGradientBrush>
+
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="HatchBrush" MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="4,8">
+                <GradientStop Offset="0" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#BE9F3B" />
+                <GradientStop Offset="0.55" Color="#8A7B66" />
+                <GradientStop Offset="1" Color="#8A7B66" />
+            </LinearGradientBrush>
+            <Style x:Key="statusHeading">
+                <Style.Resources />
+                <Style.Triggers>
+
+                    <!--
+                        Animates the color of the brush used to paint
+                        the second button from red to blue .
+                    -->
+                    <DataTrigger Binding="{Binding statusShown}" Value="True">
+
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="60"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="MaxHeight"
+                                        To="0"
+                                        Duration="0:0:0.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <DataTemplate DataType="{x:Type local:DeviceNodeGraphView}">
+                <local:DeviceNodeGraphView />
+            </DataTemplate>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="{Binding statusBannerHeight}" MaxHeight="40" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Background="#292929" Orientation="Horizontal">
@@ -31,17 +67,17 @@
                 Background="#1D1D1D"
                 Content="Refresh Devices"
                 Foreground="#ffffff" />
-            <Button
+            <!--<Button
                 x:Name="loadDevicesFromJson"
                 Margin="5,0,0,0"
                 Background="#3E3E3E"
                 Content="Load Device Settings"
-                Foreground="#ffffff" />
+                Foreground="#ffffff" />-->
             <Button
-                x:Name="saveDevicesToJson"
+                x:Name="ToggleHeart"
                 Margin="5,0,0,0"
                 Background="#3E3E3E"
-                Content="Save Device Settings"
+                Content="Toogle Heart Of First In Light"
                 Foreground="#ffffff" />
             <Button
                 x:Name="recalculateRoutes"
@@ -57,31 +93,22 @@
                 Foreground="#ffffff" />
         </StackPanel>
         <StackPanel
-            Name="statusStackPanel"
             Grid.Row="1"
+            MaxHeight="0"
             Background="{StaticResource HatchBrush}"
-            Orientation="Horizontal">
-            <StackPanel.Style>
-                <Style>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding statusShown}" Value="True">
-                            <Setter Property="StackPanel.Visibility" Value="Visible" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding statusShown}" Value="False">
-                            <Setter Property="StackPanel.Visibility" Value="Hidden" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
+            Style="{StaticResource statusHeading}">
+            <StackPanel HorizontalAlignment="Center">
 
-            <TextBlock
-                Width="{Binding ElementName=statusStackPanel, Path=ActualWidth}"
-                Height="20"
-                VerticalAlignment="Center"
-                FontWeight="Bold"
-                Foreground="#000"
-                Text="{Binding statusText, Mode=OneWay}"
-                TextAlignment="Center" />
+
+                <TextBlock
+                    Width="{Binding ElementName=statusStackPanel, Path=ActualWidth}"
+                    Height="20"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Foreground="#000"
+                    Text="{Binding statusText, Mode=OneWay}"
+                    TextAlignment="Center" />
+            </StackPanel>
 
         </StackPanel>
 
@@ -117,10 +144,11 @@
                     Text="Active Devices" />
                 <!--  Device List  -->
                 <ListBox
-                    x:Name="deviceList"
                     Grid.Row="1"
                     Background="Transparent"
-                    SelectedIndex="{Binding selectedDeviceIndex, Mode=TwoWay}">
+                    ItemsSource="{Binding deviceList, Mode=OneWay}"
+                    SelectedIndex="{Binding selectedDeviceIndex, Mode=TwoWay}"
+                    SelectionMode="Single">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Background" Value="#252525" />
@@ -137,8 +165,19 @@
                                     VerticalAlignment="Center"
                                     FontFamily="Segoe MDL2 Assets"
                                     FontSize="16"
-                                    Foreground="#FFCB4525"
-                                    Text="&#xEA92;" />
+                                    Foreground="#FFCB4525">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="&#xEA92;" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding hasHeartBeat, Mode=OneWay}" Value="True">
+                                                    <Setter Property="Text" Value="&#xEB52;" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
                                 <TextBlock
                                     Margin="20,10,20,10"
                                     HorizontalAlignment="Center"
@@ -172,90 +211,105 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <!--  Device Infomation  -->
-                <ScrollViewer Grid.Row="1" Grid.Column="1">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock
-                                    Padding="10,0,10,0"
-                                    FontSize="16"
-                                    FontWeight="SemiBold"
-                                    Foreground="#ffffff"
-                                    Text="Name:" />
-                                <TextBlock
-                                    x:Name="SelectedDevice_deviceName"
-                                    FontWeight="Light"
-                                    Foreground="#ffffff" />
-                            </StackPanel>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock
-                                    Padding="10,0,10,0"
-                                    FontSize="16"
-                                    FontWeight="SemiBold"
-                                    Foreground="#ffffff"
-                                    Text="IP Address:" />
-                                <TextBlock
-                                    x:Name="SelectedDevice_deviceIP"
-                                    FontWeight="Light"
-                                    Foreground="#ffffff" />
-                            </StackPanel>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock
-                                    Padding="10,0,10,0"
-                                    FontSize="16"
-                                    FontWeight="SemiBold"
-                                    Foreground="#ffffff"
-                                    Text="Device ID:" />
-                                <TextBlock
-                                    x:Name="SelectedDevice_deviceID"
-                                    Grid.Row="1"
-                                    Grid.Column="3"
-                                    FontWeight="Light"
-                                    Foreground="#ffffff" />
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock
-                                    FontSize="16"
-                                    FontWeight="SemiBold"
-                                    Foreground="#ffffff"
-                                    Text="Is Exit: " />
-                                <TextBlock
-                                    x:Name="SelectedDevice_isExit"
-                                    Padding="0,0,50,0"
-                                    FontWeight="Light"
-                                    Foreground="#ffffff" />
-                            </StackPanel>
-
-                            <Button
-                                x:Name="markNodeAsExit"
-                                Content="Toggle Exit"
-                                FontWeight="Light"
-                                Foreground="#ffffff" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,0">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Background="#3C000000" Orientation="Vertical">
                             <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Padding="0,0,50,0"
+                                Padding="10,5"
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Foreground="#ffffff"
-                                Text="Device Location XY:" />
-                            <StackPanel
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                Orientation="Horizontal">
-                                <TextBox x:Name="deviceLocationX" />
-                                <TextBox x:Name="deviceLocationZ" />
-                                <ComboBox SelectedIndex="{Binding routingType, Mode=TwoWay}">
-                                    <ComboBoxItem Content="Linear" />
-                                    <ComboBoxItem Content="Step" />
-                                </ComboBox>
-                            </StackPanel>
+                                Text="Name:" />
+                            <TextBlock
+                                x:Name="SelectedDevice_deviceName"
+                                Width="150"
+                                Padding="10"
+                                Background="#3C000000"
+                                FontWeight="Light"
+                                Foreground="#ffffff" />
                         </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Padding="10,5"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="#ffffff"
+                                Text="IP Address:" />
+                            <TextBlock
+                                x:Name="SelectedDevice_deviceIP"
+                                Width="150"
+                                Padding="10"
+                                Background="#3C000000"
+                                FontWeight="Light"
+                                Foreground="#ffffff" />
+                        </StackPanel>
+                        <StackPanel Background="#3C000000" Orientation="Vertical">
+                            <TextBlock
+                                Padding="10,5"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="#ffffff"
+                                Text="Device ID:" />
+                            <TextBlock
+                                x:Name="SelectedDevice_deviceID"
+                                Grid.Row="1"
+                                Grid.Column="3"
+                                Width="100"
+                                Padding="10"
+                                Background="#3C000000"
+                                FontWeight="Light"
+                                Foreground="#ffffff" />
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Padding="10,5"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="#ffffff"
+                                Text="Is Exit" />
+                            <TextBlock
+                                x:Name="SelectedDevice_isExit"
+                                Grid.Row="1"
+                                Grid.Column="3"
+                                Width="80"
+                                Padding="10"
+                                Background="#3C000000"
+                                FontWeight="Light"
+                                Foreground="#ffffff" />
+                        </StackPanel>
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="markNodeAsExit"
+                            Margin="20,10"
+                            Content="Toggle Exit"
+                            FontWeight="Light"
+                            Foreground="#ffffff" />
+                        <Button
+                            x:Name="DeactivateNode"
+                            Content="Toggle Node Activation"
+                            FontWeight="Light"
+                            Foreground="#ffffff" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <StackPanel>
+                            <Button
+                                x:Name="saveSelectedDevice"
+                                Width="250"
+                                Margin="20,0,20,10"
+                                HorizontalContentAlignment="Center"
+                                Content="Update Device Infomation"
+                                Foreground="#fff" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <!--  Device Connections  -->
+                        <StackPanel Margin="0,0,10,0">
                             <TextBlock
                                 FontSize="16"
                                 FontWeight="SemiBold"
@@ -285,17 +339,72 @@
                                 </ListView.ItemTemplate>
                             </ListView>
                         </StackPanel>
-                        <StackPanel>
-                            <Button
-                                x:Name="saveSelectedDevice"
-                                HorizontalContentAlignment="Stretch"
-                                Content="SAVE DEVICE"
-                                Foreground="#fff" />
+                        <!--  Device Image  -->
+                        <StackPanel Margin="10,0">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Padding="10,0,10,0"
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Foreground="#ffffff"
+                                    Text="Active Image Slot:" />
+                                <TextBlock
+                                    x:Name="SelectedDevice_activeImageSlot"
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    FontWeight="Light"
+                                    Foreground="#ffffff" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Padding="10,0,10,0"
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Foreground="#ffffff"
+                                    Text="Default Image Slot:" />
+                                <ComboBox Loaded="DefaultImageComboBox_Loaded" SelectedIndex="{Binding defaultImageSlot, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="30"
+                                                    Margin="0,0,10,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding slotID}" />
+                                                <Image Source="{Binding image}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel />
                         </StackPanel>
-
+                        <StackPanel Margin="10,0">
+                            <StackPanel>
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Padding="0,0,50,0"
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Foreground="#ffffff"
+                                    Text="Device Location XY:" />
+                                <StackPanel
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal">
+                                    <TextBox x:Name="deviceLocationX" />
+                                    <TextBox x:Name="deviceLocationZ" />
+                                    <!--<ComboBox SelectedIndex="{Binding routingType, Mode=TwoWay}">
+                                        <ComboBoxItem Content="Linear" />
+                                        <ComboBoxItem Content="Step" />
+                                    </ComboBox>-->
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                </ScrollViewer>
-
+                </StackPanel>
             </Grid>
 
             <GridSplitter

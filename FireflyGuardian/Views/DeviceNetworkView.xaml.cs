@@ -24,6 +24,12 @@ namespace FireflyGuardian.Views
         public DeviceNetworkView()
         {
             InitializeComponent();
-        } 
+        }
+
+        private void DefaultImageComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            ComboBox cmb = sender as ComboBox;
+            cmb.ItemsSource = ServerResources.ServerManagement.mediaSlots;
+        }
     }
 }

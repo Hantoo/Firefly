@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using FireflyGuardian.Models;
 using FireflyGuardian.ServerResources.DataAccess;
+using Microsoft.Win32;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+using FireflyGuardian.ServerResources;
+using System.ComponentModel;
+using FireflyGuardian.Views;
 
 namespace FireflyGuardian.ViewModels
 {
@@ -26,20 +33,48 @@ namespace FireflyGuardian.ViewModels
             _shell = shell;
         }
 
+        public void LoadFromFile()
+        {
+             OpenFileDialog openShowFile = new OpenFileDialog();
+            openShowFile.Filter = "FireFly Project File |*.fly| Zip Files | *.zip";
+            bool hasFile;
+            hasFile = (bool)openShowFile.ShowDialog();
+            // Get the selected file name and display in a TextBox.
+            // Load content of file in a TextBlock
+            if (hasFile == true)
+            {
+                hasFile = false;
+                ServerResources.DataAccess.json.unZipProjectFile(openShowFile.FileName);
+                _shell.generatePages();
+                _shell.ExitSetupView();
+            }
+        }
+
         public void submitSettings()
         {
-
-            SettingsModel settings = new SettingsModel();
-            settings.ftpPassword = ftp_Password;
-            settings.ftpURL = ftp_IP;
-            settings.ftpUsername = ftp_User;
-            FireflyGuardian.ServerResources.ServerManagement.settings = settings;
+            if (FireflyGuardian.ServerResources.ServerManagement.settings == null)
+            {
+                SettingsModel settings = new SettingsModel();
+                settings.ftpPassword = ftp_Password;
+                settings.ftpURL = ftp_IP;
+                settings.ftpUsername = ftp_User;
+                FireflyGuardian.ServerResources.ServerManagement.settings = settings;
+            }
+            else
+            {
+                FireflyGuardian.ServerResources.ServerManagement.settings.ftpPassword = ftp_Password;
+                FireflyGuardian.ServerResources.ServerManagement.settings.ftpURL = ftp_IP;
+                FireflyGuardian.ServerResources.ServerManagement.settings.ftpUsername = ftp_User;
+            }
             
             if (testSettings())
             {
-                string JSONresult = JsonConvert.SerializeObject(settings);
+                string JSONresult = JsonConvert.SerializeObject(FireflyGuardian.ServerResources.ServerManagement.settings);
                 _Init.generateSettings(JSONresult);
+                ServerResources.DataAccess.Init.createBaseLocalisedMediaPool();
+                
                 _shell.ExitSetupView();
+                
             }
             else
             {

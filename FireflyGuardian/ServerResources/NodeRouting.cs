@@ -47,6 +47,7 @@ namespace FireflyGuardian.ServerResources
                 if (devices[i].isExit)
                 {
                     exitNodeIds.Add(devices[i].deviceID);
+                    devices[i].activeImageSlot = 10;
                 }
 
             }
@@ -72,11 +73,13 @@ namespace FireflyGuardian.ServerResources
                     double distance = Math.Sqrt((Math.Pow(calculatedDistanceX, 2) + Math.Pow(calculatedDistanceZ, 2)));
 
                     //Graph connection is only one way, so reverse graph path
-                    //Connection To
-                    graph.Connect((uint)devices[i].deviceID, (uint)devices[i].deviceConnectionOutputIds[j], (Convert.ToInt32(distance)), "some custom information in edge");
-                    // Return Connection 
-                    graph.Connect((uint)devices[i].deviceConnectionOutputIds[j], (uint)devices[i].deviceID, (Convert.ToInt32(distance)), "some custom information in edge");
-                    
+                    if (!devices[i].flagEmergencyAtNode && !getInfomationAboutDevice(devices[i].deviceConnectionOutputIds[j]).flagEmergencyAtNode)
+                    {
+                        //Connection To
+                        graph.Connect((uint)devices[i].deviceID, (uint)devices[i].deviceConnectionOutputIds[j], (Convert.ToInt32(distance)), "some custom information in edge");
+                        // Return Connection 
+                        graph.Connect((uint)devices[i].deviceConnectionOutputIds[j], (uint)devices[i].deviceID, (Convert.ToInt32(distance)), "some custom information in edge");
+                    }
                 }
             }
             
@@ -84,6 +87,18 @@ namespace FireflyGuardian.ServerResources
 
         }
         //ToDo: Now calculate the quickest route from all nodes to the exit 
+
+        public DeviceModel getInfomationAboutDevice(int idNum)
+        {
+            for (int i = 0; i < locallist_devices.Count; i++)
+            {
+                if(locallist_devices[i].deviceID == idNum)
+                {
+                    return locallist_devices[i];
+                }
+            }
+            return null;           
+        }
 
         public void calculateRoutesForAllExitsForAllNodes()
         {
@@ -109,6 +124,7 @@ namespace FireflyGuardian.ServerResources
                     if (node.deviceID == exitNodeIds[j])
                     {
                         isExitNode = true;
+                        
                         break;
                     }
                 }
@@ -140,6 +156,7 @@ namespace FireflyGuardian.ServerResources
                             {
                                 
                                 shouldSkip = true;
+                                
                                 break;
                             }
                         }
@@ -219,8 +236,12 @@ namespace FireflyGuardian.ServerResources
                     }
                 }
             }
+            
+            
 
-            ServerResources.ServerManagement.devices = locallist_devices;
+            
+
+                ServerResources.ServerManagement.devices = locallist_devices;
 
 
         }
@@ -244,6 +265,7 @@ namespace FireflyGuardian.ServerResources
                     }
 
                 }
+
                 if(smallestDistanceIndex == -1)
                 {
                     locallist_devices[i].activeImageSlot = 0;
@@ -251,7 +273,24 @@ namespace FireflyGuardian.ServerResources
                 else {
                     locallist_devices[i].activeImageSlot = locallist_devices[i].exitRoutings[smallestDistanceIndex].directionToNextNode;
                 }
-                
+                if (locallist_devices[i].flagEmergencyAtNode)
+                {
+                    locallist_devices[i].activeImageSlot = 9;
+                }
+                for (int k = 0; k < locallist_devices.Count; k++)
+                {
+
+                    for (int n = 0; n < exitNodeIds.Count; n++)
+                    {
+
+                        if (locallist_devices[k].deviceID == exitNodeIds[n])
+                        {
+                            locallist_devices[k].activeImageSlot = 10;
+
+                        }
+                    }
+                }
+
                 //whichever exit that is, set the current image to be the direction to the node.
             }
         }
