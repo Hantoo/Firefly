@@ -13,7 +13,7 @@ namespace FireflyGuardian.ServerResources.UDP
 {
     class UDPServer
     {
-
+        //ToDo: Set Polling of devices to boardcast on IP
         private UdpClient udpClient;
         private const int sendPort = 43594;
         private const int listenPort = 43595;
@@ -66,6 +66,7 @@ namespace FireflyGuardian.ServerResources.UDP
 
         public void UDPSend(byte[] message, string iP, int portAddress = sendPort)
         {
+            if(iP == "" || message.Length == 0) { return; }
             udpDataModel sendMessage = new udpDataModel();
             sendMessage.data = message;
             sendMessage.altIPData = new IPEndPoint(utils.GetLocalIPAddress(), sendPort);

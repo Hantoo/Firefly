@@ -119,7 +119,64 @@ namespace FireflyGuardian.ServerResources
         public static void addDevice(DeviceModel device)
         {
             devices.Add(device);
+        }
 
+        public static void clearAllDevice()
+        {
+            devices.Clear();
+        }
+
+        public static void deleteDeviceFromSystem(DeviceModel model)
+        {
+            //Look at and remove device from list
+            for (int i = 0; i < devices.Count; i++)
+            {
+                if (devices[i].deviceID == model.deviceID)
+                {
+                    devices.RemoveAt(i);
+                    break;
+                }
+            }
+           
+            for (int i = 0; i < devices.Count; i++)
+            {
+                //Remove removed device from connections
+                for (int j = 0; j < devices[i].deviceConnectionOutputIds.Count; j++)
+                {
+                    if(devices[i].deviceConnectionOutputIds[j] == model.deviceID)
+                    {
+                        devices[i].deviceConnectionOutputIds.RemoveAt(j);
+                    }
+                }
+            }
+
+            //Remove removed device from routines
+            for (int i = 0; i < routines.Count; i++)
+            {
+                
+                
+                for (int j = 0; j < routines[i].deviceIDsToRun.Count; j++)
+                {
+                    if (routines[i].deviceIDsToRun[j] == model.deviceID)
+                    {
+                        routines[i].deviceIDsToRun.RemoveAt(j);
+                    }
+                }
+            }
+
+
+        }
+
+        public static bool checkForDuplicateDeviceIDs(int deviceIDToMatch)
+        {
+            for(int i =0; i < devices.Count; i++)
+            {
+                if(devices[i].deviceID == deviceIDToMatch)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static void updateServermangementMediapool()

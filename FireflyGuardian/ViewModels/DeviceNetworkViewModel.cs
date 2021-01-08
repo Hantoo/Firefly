@@ -22,13 +22,21 @@ namespace FireflyGuardian.ViewModels
     //ToDo: Multiple Seclection Of Devices  - https://stackoverflow.com/questions/5741161/how-to-bind-multiple-selection-of-listview-to-viewmodel  https://stackoverflow.com/questions/2282138/wpf-listview-selecting-multiple-list-view-items
     //ToDo: Allow user to set device infomation from server and it to be updated on device.
     //ToDo: Assigning Distance And Capacity Of Corridor 
-    //ToDo: Assigning Node As Exit
+
     //ToDo: Assigning Fire Or No Go Area
     //ToDo: Assigning Node As Room
     //ToDo: Add Removal Of Connections
     public delegate void NotifyCanvasRefresh();
     public delegate void NotifyNodeChange();
     public delegate void NotifyDeviceViewModelDestory();
+
+    public enum infoWindowShown
+    {
+        deviceInfomation,
+        addDevice,
+        editDevice,
+        none
+    }
 
     class DeviceNetworkViewModel : Screen
     {
@@ -56,12 +64,17 @@ namespace FireflyGuardian.ViewModels
         public double deviceLocationX { get; set; }
         public double deviceLocationZ { get; set; }
         public int routingType { get; set; }
+
+        private infoWindowShown _infoWindow { get; set; }
+        public infoWindowShown infoWindow { get { return _infoWindow; } set { previnfoWindow = _infoWindow; _infoWindow = value; NotifyOfPropertyChange(() => infoWindow);  } }
+        public infoWindowShown previnfoWindow { get; set; }
+
         //public bool nodeDrag { get { return nodeDrag; } set { nodeDrag = value; if (value == true) { canvasDraga = false; } } }
         //public bool canvasDraga { get { return canvasDraga; } set { canvasDraga = value; if (value == true) { nodeDrag = false; } } }
         //public object NodeGraphViewModelView { get; set; }// = new DeviceNodeGraphViewModel();
         public DeviceNetworkViewModel()
         {
-
+            infoWindow = infoWindowShown.none;
             nodeGraph = new DeviceNodeGraphViewModel();
             /*MessageBox.Show(ServerResources.ServerManagement.devices.Count.ToString());*/
             //NodeGraphViewModel = new DeviceNodeGraphViewModel();
@@ -92,6 +105,83 @@ namespace FireflyGuardian.ViewModels
             }
 
         }
+
+        List<DeviceModel> compareDevices = new List<DeviceModel>();
+        public void RefreshDevices()
+        {
+            compareDevices = new List<DeviceModel>(ServerManagement.devices);
+            ServerManagement.clearAllDevice();
+            deviceList.Clear();
+            ServerResources.UDP.UDPPreformattedMessages.PollBoards();
+            statusShown = true;
+            statusText = "Please Wait For Devices To Be Polled (10s)";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+            Console.WriteLine("Count: " + compareDevices.Count);
+            AwaitTaskDelay();
+        }
+
+        async Task PutTaskDelay()
+        {
+            await Task.Delay(10000);
+        }
+
+        async Task StatusBarCountDownFrom10(int num)
+        {
+            statusText = "Please Wait For Devices To Be Polled ("+(10-num)+"s)";
+            NotifyOfPropertyChange(() => statusText);
+            await Task.Delay(1000);
+        }
+
+        private async void AwaitTaskDelay()
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                await StatusBarCountDownFrom10(i);
+            }
+            //await PutTaskDelay();
+            statusShown = false;
+            statusText = "";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+            updateDeviceListWindow();
+            //deviceList = new BindableCollection<DeviceModel>(ServerManagement.devices);
+            //NotifyOfPropertyChange(() => deviceList);
+            for (int j = 0; j < compareDevices.Count; j++)
+            {
+                bool existsFromPoll = false;
+                for (int i=0; i<ServerManagement.devices.Count; i++)
+                {
+                    if(ServerManagement.devices[i].deviceID == compareDevices[j].deviceID)
+                    {
+                        existsFromPoll = true;
+                        ServerManagement.devices[i].deviceName = compareDevices[j].deviceName;
+                        ServerManagement.devices[i].deviceXZLocationOnGrid = compareDevices[j].deviceXZLocationOnGrid;
+                        ServerManagement.devices[i].activeImageSlot = compareDevices[j].activeImageSlot;
+                        ServerManagement.devices[i].defaultImage = compareDevices[j].defaultImage;
+                        ServerManagement.devices[i].deviceConnectionOutputIds = compareDevices[j].deviceConnectionOutputIds;
+                        ServerManagement.devices[i].isExit = compareDevices[j].isExit;
+                        ServerManagement.devices[i].orientationRotation = compareDevices[j].orientationRotation;
+                        break;
+                        //Polled Device is the same as previously added device
+                    }
+                }
+                if (!existsFromPoll)
+                {
+                    ServerManagement.addDevice(compareDevices[j]);
+                }
+            }
+            RefreshCanvas?.Invoke();
+            compareDevices.Clear();
+            Console.WriteLine("Devices Updated");
+
+        }
+
+
 
         public static void GlobalDestroyNodeCanvas()
         {
@@ -176,8 +266,19 @@ namespace FireflyGuardian.ViewModels
                     }
                     
                 }
+                if(value != null)
+                {
+                    infoWindow = infoWindowShown.deviceInfomation;
+                    NotifyOfPropertyChange(() => infoWindow);
+                    Console.WriteLine("Set Window Shown To Device Infomation");
+                }
+                else {
+                    infoWindow = infoWindowShown.none;
+                    NotifyOfPropertyChange(() => infoWindow);
+                }
                 defaultImageSlot = SelectedDevice.defaultImage;
                 NotifyOfPropertyChange(() => defaultImageSlot);
+                
                 //Take double and split to single ints
                 deviceLocationX = SelectedDevice.deviceXZLocationOnGrid.Item1;
                 deviceLocationZ = SelectedDevice.deviceXZLocationOnGrid.Item2;
@@ -250,7 +351,7 @@ namespace FireflyGuardian.ViewModels
             NotifyOfPropertyChange(() => statusText);
             NotifyOfPropertyChange(() => statusShown);
             NotifyOfPropertyChange(() => statusBannerHeight);
-
+            
         }
 
         
@@ -358,6 +459,188 @@ namespace FireflyGuardian.ViewModels
 
             ServerManagement.deviceStructureValid = false;
         }
+
+        public void RemoveConnection(string deletionDeviceID)
+        {
+            //obj
+            //Button btn = sender as Button;#
+            int deletionDeviceIDint = int.Parse(deletionDeviceID);
+            for(int i =0; i < SelectedDeviceConnections.Count; i++)
+            {
+                if(SelectedDeviceConnections[i].deviceID == deletionDeviceIDint)
+                {
+                    SelectedDeviceConnections.RemoveAt(i);
+                }
+            }
+            
+            for (int i =0; i < SelectedDevice.deviceConnectionOutputIds.Count; i++)
+            {
+                if(SelectedDevice.deviceConnectionOutputIds[i] == deletionDeviceIDint)
+                {
+                    SelectedDevice.deviceConnectionOutputIds.RemoveAt(i);
+                }
+            }
+            
+            SelectedDevice = null;
+            NotifyOfPropertyChange(() => SelectedDevice);
+
+            RefreshCanvas?.Invoke();
+                
+        }
+
+        #region New Device Addition
+
+        private string _newdeviceID { get; set; }
+
+        bool IsAllDigits(string s)
+        {
+            foreach (char c in s)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+            return true;
+        }
+
+        public string newdeviceID
+        {
+            get { return _newdeviceID; }
+            set
+            {
+
+                if (IsAllDigits(value))
+                {
+                    if(value == "") { value = "0"; }
+                    //String is all numbers
+                    int intValue = int.Parse(value);
+                    _newdeviceID = value;
+                    if (intValue < 0)
+                    {
+                        _newdeviceID = 0.ToString();
+                    }
+                    if (intValue > 65025)
+                    {
+                        _newdeviceID = 65025.ToString();
+                    }
+                }
+                else
+                {
+                    _newdeviceID = 0.ToString();
+                }
+                NotifyOfPropertyChange(() => newdeviceID);
+            }
+        }
+
+        public void AddNewDevice()
+        {
+            Console.WriteLine("Adding New Device");
+            infoWindow = infoWindowShown.addDevice;
+
+        }
+
+        public void AddNewDeviceToDeviceList()
+        {
+            if (ServerManagement.checkForDuplicateDeviceIDs(int.Parse(newdeviceID)))
+            {
+                statusShown = true;
+                statusText = "Device Exists With Same ID - Please Choose Different ID";
+                statusBannerHeight = 30;
+                NotifyOfPropertyChange(() => statusText);
+                NotifyOfPropertyChange(() => statusShown);
+                NotifyOfPropertyChange(() => statusBannerHeight);
+                return;
+            }
+            
+            DeviceModel newDevice = new DeviceModel();
+            newDevice.deviceID = int.Parse(newdeviceID);
+            newDevice.deviceName = "--Unsynced Device-- ("+newdeviceID+")";
+            newDevice.defaultImage = 0;
+            newDevice.activeImageSlot = 0;
+            
+            ServerManagement.addDevice(newDevice);
+            RefreshCanvas.Invoke();
+            infoWindow = previnfoWindow;
+             statusShown = false;
+            statusText = "";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+        }
+        
+        public void CancelAddingNewDevice()
+        {
+            infoWindow = previnfoWindow;
+            statusShown = false;
+            statusText = "";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+        }
+
+        #endregion
+
+        #region Device Editing
+
+        public string editDeviceName { get; set; }
+
+
+        public void editSelectedDevice()
+        {
+            infoWindow = infoWindowShown.editDevice;
+            updateEditInfomation();
+        }
+
+        public void updateEditInfomation()
+        {
+            editDeviceName = SelectedDevice.deviceName;
+            Console.WriteLine("Loading " + SelectedDevice.deviceName + " -> " + editDeviceName);
+            NotifyOfPropertyChange(() => editDeviceName);
+        }
+
+        public void RemoveDeviceFromSystem()
+        {
+            ServerManagement.deleteDeviceFromSystem(SelectedDevice);
+            infoWindow = infoWindowShown.none;
+
+            NotifyOfPropertyChange(() => infoWindow);
+            RefreshCanvas?.Invoke();
+            updateDeviceListWindow();
+            statusShown = true;
+            statusText = "Routes Need Recalculating";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+        }
+
+        public void UpdateEditedDevice()
+        {
+            SelectedDevice.deviceName = editDeviceName;
+            updateDeviceListWindow();
+            infoWindow = previnfoWindow;
+            statusShown = false;
+            statusText = "";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+
+        }
+
+        public void CancelEditingDevice()
+        {
+            infoWindow = previnfoWindow;
+            statusShown = false;
+            statusText = "";
+            statusBannerHeight = 30;
+            NotifyOfPropertyChange(() => statusText);
+            NotifyOfPropertyChange(() => statusShown);
+            NotifyOfPropertyChange(() => statusBannerHeight);
+        }
+
+        #endregion
 
         public void Evacuate()
         {

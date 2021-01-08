@@ -2,9 +2,11 @@
     x:Class="FireflyGuardian.Views.DeviceNetworkView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.caliburnproject.org"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:FireflyGuardian.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="clr-namespace:FireflyGuardian.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -63,9 +65,16 @@
         </Grid.RowDefinitions>
         <StackPanel Background="#292929" Orientation="Horizontal">
             <Button
+                x:Name="RefreshDevices"
                 Margin="5,0,0,0"
-                Background="#1D1D1D"
-                Content="Refresh Devices"
+                Background="#3E3E3E"
+                Content="Poll Connected Devices"
+                Foreground="#ffffff" />
+            <Button
+                x:Name="AddNewDevice"
+                Margin="5,0,0,0"
+                Background="#3E3E3E"
+                Content="Add New Device"
                 Foreground="#ffffff" />
             <!--<Button
                 x:Name="loadDevicesFromJson"
@@ -73,15 +82,10 @@
                 Background="#3E3E3E"
                 Content="Load Device Settings"
                 Foreground="#ffffff" />-->
-            <Button
-                x:Name="ToggleHeart"
-                Margin="5,0,0,0"
-                Background="#3E3E3E"
-                Content="Toogle Heart Of First In Light"
-                Foreground="#ffffff" />
+
             <Button
                 x:Name="recalculateRoutes"
-                Margin="5,0,0,0"
+                Margin="45,0,0,0"
                 Background="#3E3E3E"
                 Content="Recalculate Routes"
                 Foreground="#ffffff" />
@@ -215,6 +219,18 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="20,0">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+
+
+                                <DataTrigger Binding="{Binding infoWindow}" Value="{x:Static my:infoWindowShown.deviceInfomation}">
+                                    <Setter Property="StackPanel.Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Background="#3C000000" Orientation="Vertical">
                             <TextBlock
@@ -305,6 +321,13 @@
                                 Content="Update Device Infomation"
                                 Foreground="#fff" />
                         </StackPanel>
+                        <Button
+                            x:Name="editSelectedDevice"
+                            Width="250"
+                            Margin="20,0,20,10"
+                            HorizontalContentAlignment="Center"
+                            Content="Edit Device Infomation"
+                            Foreground="#fff" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -334,7 +357,20 @@
                             <ListView x:Name="SelectedDeviceConnections">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Foreground="#F4F4F4" Text="{Binding deviceName}" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Foreground="#F4F4F4" Text="{Binding deviceName}" />
+                                            <Button
+                                                Margin="30,0,0,0"
+                                                Padding="5"
+                                                cal:Message.Attach="[Event Click] = [Action RemoveConnection($datacontext)]"
+                                                Background="#622323"
+                                                Content="&#xE74D;"
+                                                DataContext="{Binding deviceID}"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Foreground="#fff"
+                                                Tag="{Binding deviceID}" />
+                                        </StackPanel>
+
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
@@ -403,6 +439,98 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <!--  Device Editing  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,0">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+
+
+                                <DataTrigger Binding="{Binding infoWindow}" Value="{x:Static my:infoWindowShown.editDevice}">
+                                    <Setter Property="StackPanel.Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#fff"
+                        Text="Edit Device" />
+                    <TextBlock
+                        FontWeight="Medium"
+                        Foreground="#fff"
+                        Text="Device Name:" />
+                    <TextBox x:Name="editDeviceName" />
+                    <Button
+                        x:Name="RemoveDeviceFromSystem"
+                        Margin="0,20,0,20"
+                        Padding="10"
+                        Background="#622323"
+                        Content="Delete Device From System"
+                        Foreground="#ffffff" />
+                    <!--<TextBox x:Name="newdeviceID" />-->
+                    <StackPanel Margin="20" Orientation="Horizontal">
+                        <Button
+                            x:Name="UpdateEditedDevice"
+                            Margin="5,0,0,0"
+                            Background="#3E3E3E"
+                            Content="Update Device"
+                            Foreground="#ffffff" />
+                        <Button
+                            x:Name="CancelEditingDevice"
+                            Margin="5,0,0,0"
+                            Background="#622323"
+                            Content="Cancel"
+                            Foreground="#ffffff" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Device Addition  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,0">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+
+
+                                <DataTrigger Binding="{Binding infoWindow}" Value="{x:Static my:infoWindowShown.addDevice}">
+                                    <Setter Property="StackPanel.Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#fff"
+                        Text="Add Device" />
+                    <TextBlock
+                        FontWeight="Medium"
+                        Foreground="#fff"
+                        Text="Device ID:" />
+                    <TextBox x:Name="newdeviceID" />
+                    <StackPanel Margin="20" Orientation="Horizontal">
+                        <Button
+                            x:Name="AddNewDeviceToDeviceList"
+                            Margin="5,0,0,0"
+                            Background="#3E3E3E"
+                            Content="Add New Device"
+                            Foreground="#ffffff" />
+                        <Button
+                            x:Name="CancelAddingNewDevice"
+                            Margin="5,0,0,0"
+                            Background="#622323"
+                            Content="Cancel"
+                            Foreground="#ffffff" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

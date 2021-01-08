@@ -1,7 +1,12 @@
 ﻿
 FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\App.xaml;;
 FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\MainWindow.xaml;;
-FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\ShellView.xaml;;
 FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\DashboardView.xaml;;
 FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\DeviceNetworkView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\DeviceNodeGraphView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\InitSetupWindowView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\MediaPoolView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\ScheduleView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\SettingsView.xaml;;
+FC:\Users\joelb\source\repos\Firefly\FireflyGuardian\Views\ShellView.xaml;;
 

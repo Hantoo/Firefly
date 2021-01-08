@@ -39,6 +39,7 @@ namespace FireflyGuardian.ServerResources
             exitNodeIds.Clear();
             locallist_devices.Clear();
             locallist_devices = devices;
+            graph = new Graph<int, string>();
             for (int i = 0; i < devices.Count; i++)
             {
                 graph.AddNode(devices[i].deviceID);
@@ -76,8 +77,10 @@ namespace FireflyGuardian.ServerResources
                     if (!devices[i].flagEmergencyAtNode && !getInfomationAboutDevice(devices[i].deviceConnectionOutputIds[j]).flagEmergencyAtNode)
                     {
                         //Connection To
+                        Console.WriteLine(devices[i].deviceID + " = " + devices[i].deviceConnectionOutputIds[j]);
                         graph.Connect((uint)devices[i].deviceID, (uint)devices[i].deviceConnectionOutputIds[j], (Convert.ToInt32(distance)), "some custom information in edge");
                         // Return Connection 
+                        Console.WriteLine(devices[i].deviceConnectionOutputIds[j] + " = " + devices[i].deviceID);
                         graph.Connect((uint)devices[i].deviceConnectionOutputIds[j], (uint)devices[i].deviceID, (Convert.ToInt32(distance)), "some custom information in edge");
                     }
                 }
@@ -86,7 +89,7 @@ namespace FireflyGuardian.ServerResources
             calculateRoutesForAllExitsForAllNodes();
 
         }
-        //ToDo: Now calculate the quickest route from all nodes to the exit 
+       
 
         public DeviceModel getInfomationAboutDevice(int idNum)
         {
@@ -133,16 +136,28 @@ namespace FireflyGuardian.ServerResources
                     
                     continue;
                 }
-
+                Console.WriteLine("Device: " + node.deviceID);
+              
                 //Node is not an exit node so calculate the route to all exit notdes
                 for (int j = 0; j < exitNodeIds.Count; j++)
                 {
-                    ShortestPathResult result = graph.Dijkstra((uint)node.deviceID, (uint)exitNodeIds[j]);
-                    
+                    Console.WriteLine((uint)node.deviceID + " : " + (uint)exitNodeIds[j] + " - " + node.deviceConnectionOutputIds.Count);
+                    //if(node.deviceConnectionOutputIds.Count == 0) { continue; }
+                    ShortestPathResult result;
+                    try
+                    {
+                        result = graph.Dijkstra((uint)node.deviceID, (uint)exitNodeIds[j]);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
                     List<uint> Route = new List<uint>();
+                    Console.WriteLine("Route");
                     foreach (uint nodeID in result.GetPath())
                     {
                         Route.Add(nodeID);
+                        Console.Write(nodeID+ " -> ");
                     }
                     //Go through every node within the route
                     for (int m = 0; m < Route.Count; m++) {

@@ -68,6 +68,7 @@ namespace FireflyGuardian.Models
 
         public DeviceModel()
         {
+          
             activeImageSlot = defaultImage;
         }
 
