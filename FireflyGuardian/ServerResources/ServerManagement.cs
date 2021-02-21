@@ -29,6 +29,8 @@ namespace FireflyGuardian.ServerResources
         public static List<DeviceModel> devices = new List<DeviceModel>();
         public static List<RoutineModel> routines = new List<RoutineModel>();
         private static LocalServer localServer;
+        public static int nextHeartBeatCheck_reference;
+        public static int nextGlobalUpdate_reference;
         //Global variable to indicate any changes to device array which compromises the intergrity of path algorithm, etc.
         public static bool deviceStructureValid = true;
         public static bool shouldEvacuate = false;
@@ -62,13 +64,20 @@ namespace FireflyGuardian.ServerResources
 
         public static void ShouldEvacuate()
         {
-            for (int i = 0; i < ServerManagement.routines.Count; i++)
+            if (!shouldEvacuate)
             {
-                ServerManagement.routines[i].isRunning = false;
-                ServerManagement.routines[i].routineThread.Abort();
-                Console.WriteLine("[SERVER] Setting Routine " + i + " isRunning To False");
+                for (int i = 0; i < ServerManagement.routines.Count; i++)
+                {
+                    ServerManagement.routines[i].isRunning = false;
+                    ServerManagement.routines[i].routineThread.Abort();
+                    Console.WriteLine("[SERVER] Setting Routine " + i + " isRunning To False");
+                }
+                shouldEvacuate = true;
             }
-            shouldEvacuate = true;
+            else
+            {
+                shouldEvacuate = false;
+            }
             
         }
 
@@ -183,25 +192,39 @@ namespace FireflyGuardian.ServerResources
         {
             mediaSlots = new List<MediaSlotModel>();
 
-            if (ServerManagement.settings == null) { Console.WriteLine("No Settings"); return; }
             for (int i = 0; i < 255; i++)
             {
                 MediaSlotModel slot = new MediaSlotModel();
                 slot.slotID = i;
                 if (File.Exists(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png"))
                 {
-                    slot.image_name = i + ".png";
+                    if (i < 23)
+                    {
+                        slot.image_symbol = "\uE72E";
+                    }
+                    if (ServerManagement.settings.slotNames[i] != null)
+                    {
+                        slot.image_name = ServerManagement.settings.slotNames[i];
+                    }
+                    else
+                    {
+
+                        slot.image_name = ServerManagement.settings.slotNames[i];
+                    }
                     slot.image = utils.BitmapToImageSource(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png");
                     //slot.image_source = ;
                 }
                 else
                 {
-
+                    ServerManagement.settings.slotNames[i] = "";
                     slot.image_name = "No Media";
                 }
                 mediaSlots.Add(slot);
             }
-            
+            ServerManagement.mediaSlots = mediaSlots;
+
         }
+
+        
     }
 }

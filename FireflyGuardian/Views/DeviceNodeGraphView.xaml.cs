@@ -286,6 +286,8 @@ namespace FireflyGuardian.Views
             updateImagesOnNodes();
         }
 
+       
+
         public void updateImagesOnNodes()
         {
             try
@@ -299,18 +301,36 @@ namespace FireflyGuardian.Views
 
                         for (int i = 0; i < ServerManagement.devices.Count; i++)
                         {
-                            if (canRefreshImagesOnNodes)
+                            if (ServerManagement.devices[i] != null)
                             {
-                                string imgName = "Node" + ServerManagement.devices[i].deviceID.ToString() + "_img";
-                                Image img = this.FindName(imgName) as Image;
-                                img.Source = ServerManagement.mediaSlots[ServerManagement.devices[i].activeImageSlot].image;
-                            }
-                            else
-                            {
-                                break;
+                                if (ServerManagement.mediaSlots.Count > 0)
+                                {
+                                    if (canRefreshImagesOnNodes)
+                                    {
+                                        string imgName = "Node" + ServerManagement.devices[i].deviceID.ToString() + "_img";
+                                        Image img = this.FindName(imgName) as Image;
+                                        if (img != null)
+                                        {
+                                            try
+                                            {
+                                                img.Source = ServerManagement.mediaSlots[ServerManagement.devices[i].activeImageSlot].image;
+                                            }
+                                            catch
+                                            {
+                                                ServerManagement.updateServermangementMediapool();
+                                                img.Source = ServerManagement.mediaSlots[ServerManagement.devices[i].activeImageSlot].image;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
                             }
                         }
                         AutoUpdateList.Invoke();
+                        
                     }
                     catch (Exception ex) { Console.WriteLine("DEBUG: " + ex); }
                 });

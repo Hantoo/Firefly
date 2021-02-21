@@ -77,14 +77,14 @@ namespace FireflyGuardian.ViewModels
         public bool showStatus { get; set; }
         public string statusMessage { get; set; }
         public FireflyGuardian.ViewModels.statusState statusStateIndicator { get; set; }
-
+        public bool hasSelectedRoutine { get; set; }
         private BindableCollection<RoutineModel> _routines = new BindableCollection<RoutineModel>();
         public BindableCollection<RoutineModel> routines { get { return _routines; } set { _routines = value; NotifyOfPropertyChange(() => routines); } }
         //public BindableCollection<RoutineModel> routines { get; set; }
         //private RoutineModel _SelectedRoutine { get; set; }
        // public RoutineModel SelectedRoutine { get { return _SelectedRoutine; } set { _SelectedRoutine = value; Console.WriteLine("Changed Selected"); NotifyOfPropertyChange(() => SelectedRoutine); } }
         private RoutineModel _selectedRoutine { get; set; }
-        public RoutineModel SelectedRoutine { get { return _selectedRoutine; } set { _selectedRoutine = value; if (_selectedRoutine != null) { timeslots = new BindableCollection<RoutineModel.routineTimeSlot>(_selectedRoutine.rountineTiming); mediaslots = new BindableCollection<RoutineModel.routineSlot>(_selectedRoutine.routine); }; selectedRoutineDeviceIds = new BindableCollection<int>(_selectedRoutine.deviceIDsToRun); NotifyOfPropertyChange(() => selectedRoutineDeviceIds); NotifyOfPropertyChange(() => mediaslots); NotifyOfPropertyChange(() => SelectedRoutine); NotifyOfPropertyChange(() => timeslots); } }
+        public RoutineModel SelectedRoutine { get { return _selectedRoutine; } set { _selectedRoutine = value; hasSelectedRoutine = false; if (_selectedRoutine != null) { hasSelectedRoutine = true; timeslots = new BindableCollection<RoutineModel.routineTimeSlot>(_selectedRoutine.rountineTiming); mediaslots = new BindableCollection<RoutineModel.routineSlot>(_selectedRoutine.routine); selectedRoutineDeviceIds = new BindableCollection<int>(_selectedRoutine.deviceIDsToRun); } NotifyOfPropertyChange(() => selectedRoutineDeviceIds); NotifyOfPropertyChange(() => hasSelectedRoutine); NotifyOfPropertyChange(() => mediaslots); NotifyOfPropertyChange(() => SelectedRoutine); NotifyOfPropertyChange(() => timeslots); } }
         private RoutineModel _HoverOverRoutine { get; set; }
         public RoutineModel HoverOverRoutine { get { return _HoverOverRoutine; } set { _HoverOverRoutine = value; NotifyOfPropertyChange(() => HoverOverRoutine); } }
         public BindableCollection<DeviceModel> localdevices { get; set; }
@@ -252,6 +252,7 @@ namespace FireflyGuardian.ViewModels
         {
             if(timeslots != null)
             {
+                
                 SelectedRoutine.rountineTiming.RemoveAt(hoverOverTimeSlotIndex);
                 NotifyOfPropertyChange(() => SelectedRoutine);
                 updateTimeSlotsForSelectedRoutine();
@@ -349,17 +350,18 @@ namespace FireflyGuardian.ViewModels
 
         public void AddTimeSlot()
         {
-       
-            RoutineModel.routineTimeSlot timeSlot = new RoutineModel.routineTimeSlot();
-            timeSlot.startTime = DateTime.Now;
-            timeSlot.endTime = DateTime.Now.AddHours(1);
-            timeSlot.routineScheduleMode = SelectedRoutine.routineScheduleIndex;
+            if (SelectedRoutine != null)
+            {
+                RoutineModel.routineTimeSlot timeSlot = new RoutineModel.routineTimeSlot();
+                timeSlot.startTime = DateTime.Now;
+                timeSlot.endTime = DateTime.Now.AddHours(1);
+                timeSlot.routineScheduleMode = SelectedRoutine.routineScheduleIndex;
 
 
-            SelectedRoutine.rountineTiming.Add(timeSlot);
-            SelectedRoutine = SelectedRoutine;
-            NotifyOfPropertyChange(() => SelectedRoutine);
-        
+                SelectedRoutine.rountineTiming.Add(timeSlot);
+                SelectedRoutine = SelectedRoutine;
+                NotifyOfPropertyChange(() => SelectedRoutine);
+            }
             
         }
 

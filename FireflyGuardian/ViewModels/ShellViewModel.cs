@@ -42,22 +42,25 @@ namespace FireflyGuardian.ViewModels
         {
             ServerResources.DataAccess.Init init = new ServerResources.DataAccess.Init();
             ServerResources.ServerManagement.Init();
+            //
             if (init.firstTimeStartUp)
             {
                 menuWidth = 0;
                 NotifyOfPropertyChange(() => menuWidth);
                 ActivateItem(new InitSetupWindowViewModel(init, this));
+                //generatePages();
             }
             else
             {
-                generatePages();
-                ActivateItem(Pages[0].View);
+                //generatePages();
+                //ActivateItem(Pages[0].View);
                 ExitSetupView();
             }
         }
 
         public void ExitSetupView()
         {
+            generatePages();
             ActivateItem(Pages[0].View);
             menuWidth = 40;
             NotifyOfPropertyChange(() => menuWidth);

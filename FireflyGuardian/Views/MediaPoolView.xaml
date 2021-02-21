@@ -131,6 +131,12 @@
                 Background="#3E3E3E"
                 Content="Sync Local Media To FTP"
                 Foreground="#ffffff" />
+            <Button
+                x:Name="RequestPullToDevices"
+                Margin="5,0,0,0"
+                Background="#3E3E3E"
+                Content="Pull Images To Devices"
+                Foreground="#ffffff" />
         </StackPanel>
         <StackPanel
             Grid.Row="1"

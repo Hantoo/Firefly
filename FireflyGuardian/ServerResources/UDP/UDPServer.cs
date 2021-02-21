@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Threading;
 using FireflyGuardian.Models;
+using System.Net.NetworkInformation;
 
 namespace FireflyGuardian.ServerResources.UDP
 {
@@ -15,7 +16,7 @@ namespace FireflyGuardian.ServerResources.UDP
     {
         //ToDo: Set Polling of devices to boardcast on IP
         private UdpClient udpClient;
-        private const int sendPort = 43594;
+        private const int sendPort = 42891; //43594;
         private const int listenPort = 43595;
         public int listenport { get { return listenPort; } }
         private Queue<udpDataModel> recvDataQueue = new Queue<udpDataModel>();
@@ -63,17 +64,78 @@ namespace FireflyGuardian.ServerResources.UDP
             }
         }
 
+        public IPAddress[] GetBroadCastIP()
+        {
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
+            Console.WriteLine(hostName);
+            // Get the IP  
+            string[] ipInterfaceAddresses = new string[Dns.GetHostByName(hostName).AddressList.Length];
+            IPAddress[] boardcastInterfaceAddresses = new IPAddress[Dns.GetHostByName(hostName).AddressList.Length];
+
+            for (int i = 0; i < Dns.GetHostByName(hostName).AddressList.Length; i++)
+            {
+                ipInterfaceAddresses[i] = Dns.GetHostByName(hostName).AddressList[i].ToString();
+                string myIP = Dns.GetHostByName(hostName).AddressList[i].ToString();
+                
+
+                Console.WriteLine(Dns.GetHostByName(hostName));
+                IPAddress host = IPAddress.Parse(myIP);
+                IPAddress mask = IPAddress.Parse("255.255.0.0");
+                try
+                {
+                    mask = GetSubnetMask(host);
+                }
+                catch(Exception e){ }
+                byte[] broadcastIPBytes = new byte[4];
+                byte[] hostBytes = host.GetAddressBytes();
+                byte[] maskBytes = mask.GetAddressBytes();
+                for (int j = 0; j < 4; j++)
+                {
+                    broadcastIPBytes[j] = (byte)(hostBytes[j] | (byte)~maskBytes[j]);
+                }
+                boardcastInterfaceAddresses[i] = new IPAddress(broadcastIPBytes);
+            }
+            
+            return boardcastInterfaceAddresses;
+        }
+
+
+        public static IPAddress GetSubnetMask(IPAddress address)
+        {
+            foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                foreach (UnicastIPAddressInformation unicastIPAddressInformation in adapter.GetIPProperties().UnicastAddresses)
+                {
+                    if (unicastIPAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        if (address.Equals(unicastIPAddressInformation.Address))
+                        {
+                            return unicastIPAddressInformation.IPv4Mask;
+                        }
+                    }
+                }
+            }
+            throw new ArgumentException(string.Format("Can't find subnetmask for IP address '{0}'", address));
+        } //Subnet mask code: http://www.java2s.com/Code/CSharp/Network/GetSubnetMask.htm
 
         public void UDPSend(byte[] message, string iP, int portAddress = sendPort)
         {
-            if(iP == "" || message.Length == 0) { return; }
-            udpDataModel sendMessage = new udpDataModel();
-            sendMessage.data = message;
-            sendMessage.altIPData = new IPEndPoint(utils.GetLocalIPAddress(), sendPort);
-            sendMessage.ipData = new IPEndPoint(IPAddress.Parse(iP), portAddress);
-            sendDataQueue.Enqueue(sendMessage);
-            //ipLogModel.addToLog(sendMessage, true);
-            UDPEvent?.Invoke(this, "Message");
+            try
+            {
+                if (iP == "" || message.Length == 0) { return; }
+                udpDataModel sendMessage = new udpDataModel();
+                sendMessage.data = message;
+                sendMessage.altIPData = new IPEndPoint(utils.GetLocalIPAddress(), sendPort);
+                sendMessage.ipData = new IPEndPoint(IPAddress.Parse(iP), portAddress);
+                sendDataQueue.Enqueue(sendMessage);
+                //ipLogModel.addToLog(sendMessage, true);
+                UDPEvent?.Invoke(this, "Message");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error:" + ex);
+                return;
+            }
 
         }
 

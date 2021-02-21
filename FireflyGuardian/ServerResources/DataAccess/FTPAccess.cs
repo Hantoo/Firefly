@@ -49,7 +49,7 @@ namespace FireflyGuardian.ServerResources.DataAccess
                 request.Credentials = new NetworkCredential(username, pass);
                 request.GetResponse();
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -82,9 +82,11 @@ namespace FireflyGuardian.ServerResources.DataAccess
         public static void syncLocalisedMediaPoolToFTPServer()
         {
             DirectoryInfo mediapoolInfo = new DirectoryInfo(ServerManagement.settings.absoluteLocationOfLocalisedMedia);
-            for(int i=0; i< mediapoolInfo.GetFiles().Length; i++)
+            FileInfo[] fileInf = mediapoolInfo.GetFiles();
+            for (int i=0; i< mediapoolInfo.GetFiles().Length; i++)
             {
-                UploadFileToFTP(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png", ServerManagement.settings.ftpURL, i+".png", ServerManagement.settings.ftpUsername, ServerManagement.settings.ftpPassword);
+                Console.WriteLine("asda: " + fileInf[i].Name);
+                UploadFileToFTP(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + fileInf[i].Name, ServerManagement.settings.ftpURL, fileInf[i].Name, ServerManagement.settings.ftpUsername, ServerManagement.settings.ftpPassword);
             }
             Console.WriteLine("Items In Pool: "+mediapoolInfo.GetFiles().Length);
           
@@ -98,7 +100,10 @@ namespace FireflyGuardian.ServerResources.DataAccess
             ftpReq.UseBinary = true;
             ftpReq.Method = WebRequestMethods.Ftp.UploadFile;
             ftpReq.Credentials = new NetworkCredential(infomation.username, infomation.password);
-
+            //if (!File.Exists(infomation.locationOfFileOnPCWithExtenstion))
+            //{
+            //    return;
+            //}
             byte[] b = File.ReadAllBytes(@"" + infomation.locationOfFileOnPCWithExtenstion);
             ftpReq.ContentLength = b.Length;
             using (Stream s = ftpReq.GetRequestStream())

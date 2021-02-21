@@ -36,6 +36,12 @@
           "lib/net40/Dijkstra.NET.dll": {}
         }
       },
+      "Microsoft.UI.Xaml/2.5.0": {
+        "type": "package",
+        "build": {
+          "buildTransitive/Microsoft.UI.Xaml.props": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -274,6 +280,15 @@
         "runtime": {
           "lib/net47/System.ValueTuple.dll": {}
         }
+      },
+      "XamlRadialProgressBar/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        },
+        "runtime": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        }
       }
     },
     ".NETFramework,Version=v4.7.2/win": {
@@ -309,6 +324,12 @@
         },
         "runtime": {
           "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
+      "Microsoft.UI.Xaml/2.5.0": {
+        "type": "package",
+        "build": {
+          "buildTransitive/Microsoft.UI.Xaml.props": {}
         }
       },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
@@ -539,6 +560,15 @@
         "runtime": {
           "lib/net47/System.ValueTuple.dll": {}
         }
+      },
+      "XamlRadialProgressBar/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        },
+        "runtime": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        }
       }
     },
     ".NETFramework,Version=v4.7.2/win-x64": {
@@ -574,6 +604,12 @@
         },
         "runtime": {
           "lib/net40/Dijkstra.NET.dll": {}
+        }
+      },
+      "Microsoft.UI.Xaml/2.5.0": {
+        "type": "package",
+        "build": {
+          "buildTransitive/Microsoft.UI.Xaml.props": {}
         }
       },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
@@ -803,6 +839,15 @@
         },
         "runtime": {
           "lib/net47/System.ValueTuple.dll": {}
+        }
+      },
+      "XamlRadialProgressBar/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        },
+        "runtime": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
         }
       }
     },
@@ -841,6 +886,12 @@
           "lib/net40/Dijkstra.NET.dll": {}
         }
       },
+      "Microsoft.UI.Xaml/2.5.0": {
+        "type": "package",
+        "build": {
+          "buildTransitive/Microsoft.UI.Xaml.props": {}
+        }
+      },
       "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
         "type": "package",
         "dependencies": {
@@ -1068,6 +1119,15 @@
         },
         "runtime": {
           "lib/net47/System.ValueTuple.dll": {}
+        }
+      },
+      "XamlRadialProgressBar/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
+        },
+        "runtime": {
+          "lib/net452/XamlRadialProgressBar.DotNet.dll": {}
         }
       }
     }
@@ -1168,6 +1228,37 @@
         "dijkstra.net.nuspec",
         "lib/net40/Dijkstra.NET.dll",
         "lib/netstandard1.3/Dijkstra.NET.dll"
+      ]
+    },
+    "Microsoft.UI.Xaml/2.5.0": {
+      "sha512": "fI2rIvTd9G+2cADLucgHwvauPOfnfDmNtbebq0+Hk9VhZlT9UZcNyrKIJWQEReGL4DAEhNRMwImHJSV+y0mu4A==",
+      "type": "package",
+      "path": "microsoft.ui.xaml/2.5.0",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/Common.targets",
+        "build/Microsoft.UI.Xaml.props",
+        "build/MicrosoftUIXamlVersion.props",
+        "build/native/Microsoft.UI.Xaml.targets",
+        "buildTransitive/Common.targets",
+        "buildTransitive/Microsoft.UI.Xaml.props",
+        "buildTransitive/MicrosoftUIXamlVersion.props",
+        "lib/uap10.0/Design/Microsoft.UI.Xaml.Design.dll",
+        "lib/uap10.0/Microsoft.UI.Xaml.pri",
+        "lib/uap10.0/Microsoft.UI.Xaml.winmd",
+        "lib/uap10.0/Microsoft.UI.Xaml.xml",
+        "lib/uap10.0/Microsoft.UI.Xaml/Themes/Generic.xaml",
+        "license.txt",
+        "microsoft.ui.xaml.2.5.0.nupkg.sha512",
+        "microsoft.ui.xaml.nuspec",
+        "readme.txt",
+        "tools/AppX/arm/Release/Microsoft.UI.Xaml.2.5.appx",
+        "tools/AppX/arm64/Release/Microsoft.UI.Xaml.2.5.appx",
+        "tools/AppX/x64/Release/Microsoft.UI.Xaml.2.5.appx",
+        "tools/AppX/x86/Release/Microsoft.UI.Xaml.2.5.appx",
+        "tools/VisualStudioToolsManifest.xml"
       ]
     },
     "Microsoft.Windows.SDK.Contracts/10.0.18362.2005": {
@@ -1733,20 +1824,37 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "XamlRadialProgressBar/1.0.3": {
+      "sha512": "loSQXgOKkSXfjWbDXTKCy6yv4ECPJRUcFh1Sbi3WseW0opSnXyJUXEPsRl/KevdFYEqKrZwZ4BSA0ANzSFhiSA==",
+      "type": "package",
+      "path": "xamlradialprogressbar/1.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/icon.jpg",
+        "lib/net452/XamlRadialProgressBar.DotNet.dll",
+        "lib/netcoreapp3.1/XamlRadialProgressBar.dll",
+        "xamlradialprogressbar.1.0.3.nupkg.sha512",
+        "xamlradialprogressbar.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.7.2": [
       "Caliburn.Micro >= 3.2.0",
       "Dijkstra.NET >= 1.2.1",
+      "Microsoft.UI.Xaml >= 2.5.0",
       "ModernWpfUI >= 0.9.2",
       "Newtonsoft.Json >= 12.0.3",
       "Prism.Core >= 8.0.0.1909",
-      "System.IO.Compression >= 4.3.0"
+      "System.IO.Compression >= 4.3.0",
+      "XamlRadialProgressBar >= 1.0.3"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\joelb\\.nuget\\packages\\": {}
+    "C:\\Users\\joelb\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -1758,8 +1866,12 @@
       "outputPath": "C:\\Users\\joelb\\source\\repos\\Firefly\\FireflyGuardian\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\joelb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1786,6 +1898,10 @@
             "target": "Package",
             "version": "[1.2.1, )"
           },
+          "Microsoft.UI.Xaml": {
+            "target": "Package",
+            "version": "[2.5.0, )"
+          },
           "ModernWpfUI": {
             "target": "Package",
             "version": "[0.9.2, )"
@@ -1801,6 +1917,10 @@
           "System.IO.Compression": {
             "target": "Package",
             "version": "[4.3.0, )"
+          },
+          "XamlRadialProgressBar": {
+            "target": "Package",
+            "version": "[1.0.3, )"
           }
         }
       }

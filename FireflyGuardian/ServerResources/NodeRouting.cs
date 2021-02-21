@@ -21,6 +21,7 @@ namespace FireflyGuardian.ServerResources
         private List<int> exitNodeIds;
         private List<DeviceModel> locallist_devices;
         const double Rad2Deg = 180.0 / Math.PI; 
+        private int highestDeviceID = 0;
 
         public NodeRouting()
         {
@@ -35,22 +36,46 @@ namespace FireflyGuardian.ServerResources
         //It connects the node and the device connection with the caluclated distance (as the bird flies)
         public void makeGraphFromDeviceList(List<DeviceModel> devices)
         {
-           
+           if(devices.Count == 0) { return; }
             exitNodeIds.Clear();
             locallist_devices.Clear();
             locallist_devices = devices;
             graph = new Graph<int, string>();
+            int[] deviceIDs = new int[devices.Count];
             for (int i = 0; i < devices.Count; i++)
             {
-                graph.AddNode(devices[i].deviceID);
+                deviceIDs[i] = devices[i].deviceID;
+            }
+            highestDeviceID = deviceIDs.Max();
+            //for (int i = 0; i < devices.Count; i++)
+            //{
+            //    Console.WriteLine("Graphing: " + devices[i].deviceID);
+            //    graph.AddNode(devices[i].deviceID);
+            //    devices[i].exitRoutings.Clear();
+            //    //If node is a exit node then add to exit node list
+            //    if (devices[i].isExit)
+            //    {
+            //        exitNodeIds.Add(devices[i].deviceID);
+            //        devices[i].activeImageSlot = 10;
+            //        devices[i].emergecnyImage = 10;
+            //    }
+
+            //}
+            for (int i = 0; i < devices.Count; i++)
+            {
                 devices[i].exitRoutings.Clear();
                 //If node is a exit node then add to exit node list
                 if (devices[i].isExit)
                 {
                     exitNodeIds.Add(devices[i].deviceID);
                     devices[i].activeImageSlot = 10;
+                    devices[i].emergecnyImage = 10;
                 }
-
+            }
+            for (int i = 0; i < highestDeviceID; i++)
+            {
+                Console.WriteLine("Graphing: " + i);
+                graph.AddNode(i);
             }
             for (int i = 0; i < devices.Count; i++)
             {
@@ -109,7 +134,16 @@ namespace FireflyGuardian.ServerResources
             
             List<DeviceModel> templist = new List<DeviceModel>(locallist_devices);
 
-            
+            Console.WriteLine("Node Count: " + graph.NodesCount);
+            IEnumerator<INode<int, string>> inodes = graph.GetEnumerator();
+            int[] KeyValueArray = new int[graph.NodesCount];
+            int itteration = 0;
+            while (inodes.MoveNext())
+            {
+                KeyValueArray[itteration] = inodes.Current.Item;
+                itteration++;
+                Console.WriteLine("Key: " + inodes.Current.Key + ", Item: " + inodes.Current.Item);
+            }
 
             //for every node in the device list
             for (int i = 0; i < locallist_devices.Count; i++)
@@ -146,10 +180,15 @@ namespace FireflyGuardian.ServerResources
                     ShortestPathResult result;
                     try
                     {
+                        
+                        //result = graph.Dijkstra(fromKeyIndex, toKeyIndex);
                         result = graph.Dijkstra((uint)node.deviceID, (uint)exitNodeIds[j]);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Console.WriteLine("=====");
+                        Console.WriteLine("Dijkstrra Error: " + e.Message);
+                        Console.WriteLine("=====");
                         continue;
                     }
                     List<uint> Route = new List<uint>();
@@ -177,6 +216,7 @@ namespace FireflyGuardian.ServerResources
                         }
                         if (shouldSkip)
                         {
+                            Console.WriteLine("Exit Node Detected: Skipping Route Calculation");
                             continue;
                         }
 
@@ -251,12 +291,56 @@ namespace FireflyGuardian.ServerResources
                     }
                 }
             }
-            
-            
 
-            
 
-                ServerResources.ServerManagement.devices = locallist_devices;
+
+            for (int i = 0; i < locallist_devices.Count; i++)
+            {
+                int smallestDistance = 900000;
+                int smallestDistanceIndex = -1;
+
+                for (int j = 0; j < locallist_devices[i].exitRoutings.Count; j++)
+                {
+
+                    if (locallist_devices[i].exitRoutings[j].distanceToTargetExitNode < smallestDistance)
+                    {
+                        smallestDistance = locallist_devices[i].exitRoutings[j].distanceToTargetExitNode;
+                        smallestDistanceIndex = j;
+                    }
+
+                }
+
+                if (smallestDistanceIndex == -1)
+                {
+                    locallist_devices[i].emergecnyImage = 0;
+                }
+                else
+                {
+                    locallist_devices[i].emergecnyImage = locallist_devices[i].exitRoutings[smallestDistanceIndex].directionToNextNode;
+                }
+                if (locallist_devices[i].flagEmergencyAtNode)
+                {
+                    locallist_devices[i].emergecnyImage = 9;
+                }
+                for (int k = 0; k < locallist_devices.Count; k++)
+                {
+
+                    for (int n = 0; n < exitNodeIds.Count; n++)
+                    {
+
+                        if (locallist_devices[k].deviceID == exitNodeIds[n])
+                        {
+                            locallist_devices[k].emergecnyImage = 10;
+
+                        }
+                    }
+                }
+
+                //whichever exit that is, set the current image to be the direction to the node.
+            }
+        
+
+        ServerResources.ServerManagement.devices = locallist_devices;
 
 
         }

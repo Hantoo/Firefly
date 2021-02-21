@@ -332,6 +332,18 @@
             Background="#15000000">
 
             <StackPanel Margin="30,10">
+                <StackPanel.Style>
+                    <Style>
+                        <Setter Property="StackPanel.Visibility" Value="Hidden" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding hasSelectedRoutine, Mode=OneWay}" Value="True">
+                                <Setter Property="StackPanel.Visibility" Value="Visible" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
                 <TextBlock Foreground="#fff" Text="Routine Name" />
                 <TextBlock
                     x:Name="SelectedRoutine_routineName"
@@ -620,7 +632,7 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </StackPanel>
-                    <TextBlock Text="Devices" />
+                    <TextBlock Foreground="#ffffff" Text="Devices" />
                     <StackPanel Orientation="Horizontal">
                         <ComboBox ItemsSource="{Binding localdevices, Mode=OneWay}" SelectedItem="{Binding selectedDeviceToRoutine, Mode=OneWayToSource}">
                             <ComboBox.ItemTemplate>
@@ -632,7 +644,10 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <Button x:Name="AddSelectedDeviceToRoutine" Content="Add Device To Routine" />
+                        <Button
+                            x:Name="AddSelectedDeviceToRoutine"
+                            Content="Add Device To Routine"
+                            Foreground="#ffffff" />
                     </StackPanel>
                     <ListBox ItemsSource="{Binding selectedRoutineDeviceIds}">
                         <ListBox.ItemTemplate>
@@ -660,9 +675,24 @@
             Grid.Row="2"
             Grid.Column="2"
             Margin="10">
+            <StackPanel.Style>
+                <Style>
+                    <Setter Property="StackPanel.Visibility" Value="Hidden" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding hasSelectedRoutine, Mode=OneWay}" Value="True">
+                            <Setter Property="StackPanel.Visibility" Value="Visible" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
             <TextBlock Foreground="#fff" Text="Media Pane" />
 
-            <Button x:Name="AddMediaSlot" Content="Add Media Slot" />
+            <Button
+                x:Name="AddMediaSlot"
+                Content="Add Media Slot"
+                Foreground="#ffffff" />
             <ListView x:Name="MediaList" ItemsSource="{Binding mediaslots}">
                 <ListView.Resources>
                     <my:DataContextSpy x:Key="dataContextSpy" />

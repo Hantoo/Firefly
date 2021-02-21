@@ -28,7 +28,7 @@ namespace FireflyGuardian.ViewModels
     {
         public List<MediaSlotModel> mediaSlots { get; set; }
         private MediaSlotModel _SelectedImageSlot;
-        public MediaSlotModel SelectedImageSlot { get { return _SelectedImageSlot; } set { _SelectedImageSlot = value; if (_SelectedImageSlot.slotID <= 10) { showMediaUploadButton = "Hidden"; } else { showMediaUploadButton = "Visible"; } NotifyOfPropertyChange(() => SelectedImageSlot); NotifyOfPropertyChange(() => showMediaUploadButton); } }
+        public MediaSlotModel SelectedImageSlot { get { return _SelectedImageSlot; } set { _SelectedImageSlot = value; if (_SelectedImageSlot.slotID < 23) { showMediaUploadButton = "Hidden"; } else { showMediaUploadButton = "Visible"; } NotifyOfPropertyChange(() => SelectedImageSlot); NotifyOfPropertyChange(() => showMediaUploadButton); } }
         public string showMediaUploadButton { get; set; }
         public bool renameMediaButton { get; set; }
         public string mediaSlotName { get; set; }
@@ -80,7 +80,7 @@ namespace FireflyGuardian.ViewModels
         #region Rename Slot
         public void RenameImage()
         {
-            if (SelectedImageSlot.slotID < 11)
+            if (SelectedImageSlot.slotID < 23)
             {
                 return;
             }
@@ -127,7 +127,7 @@ namespace FireflyGuardian.ViewModels
                 slot.slotID = i;
                 if (File.Exists(ServerManagement.settings.absoluteLocationOfLocalisedMedia + "/" + i + ".png"))
                 {
-                    if(i < 21)
+                    if(i < 23)
                     {
                         slot.image_symbol = "\uE72E";
                     }
@@ -176,13 +176,19 @@ namespace FireflyGuardian.ViewModels
             }
         }
 
+        public void RequestPullToDevices()
+        {
+            ServerResources.UDP.UDPPreformattedMessages.RequestImagesFromFTPForAllDevices();
+        }
+
         public void replaceImage()
         {
             OpenFileDialog fileUpload = new OpenFileDialog();
             fileUpload.Filter = ".png Files | *.png";
             fileUpload.ShowDialog();
-            if (fileUpload.FileName != null)
+            if (fileUpload.FileName != null && File.Exists(fileUpload.FileName))
             {
+                
                 Image upload = Image.FromFile(fileUpload.FileName);
                 //If file is not correct size then rescale the image to be the correct size.
                 if (upload.Width != 64 || upload.Height != 64)

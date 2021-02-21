@@ -28,6 +28,7 @@ namespace FireflyGuardian.Models
                 } else { _activeImageSlot = value; }
             }}
         public int orientationRotation { get; set; }
+        public int emergecnyImage { get; set; }
         //Used For Quick Node Networking 
         public List<int> deviceConnectionOutputIds = new List<int>();
 

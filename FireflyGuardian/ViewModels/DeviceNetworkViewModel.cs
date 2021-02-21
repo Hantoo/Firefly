@@ -53,9 +53,12 @@ namespace FireflyGuardian.ViewModels
         DeviceNodeGraphViewModel nodeGraph;
         public bool canvasDraga { get; set; }
         public bool nodeDrag { get; set; }
-        
-        public int defaultImageSlot { get { if (SelectedDevice != null) { return SelectedDevice.defaultImage; Console.WriteLine("Selected Device Exists"); } else { return 0; } } 
-                                      set { if (SelectedDevice != null) { Console.WriteLine("Selected Device Exists"); SelectedDevice.defaultImage = value; NotifyOfPropertyChange(() => SelectedDevice); } } }
+        public int globalUpdateTimeRef { get; set; }
+        public int heartUpdateTimeRef
+        { get; set; }
+
+        public int defaultImageSlot { get { if (SelectedDevice != null) { return SelectedDevice.defaultImage; Console.WriteLine("Selected Device Exists"); } else { return 0; } }
+            set { if (SelectedDevice != null) { Console.WriteLine("Selected Device Exists"); SelectedDevice.defaultImage = value; NotifyOfPropertyChange(() => SelectedDevice); } } }
         private int _selectedDeviceIndex;
         private DeviceModel _SelectedDevice;
         public BindableCollection<DeviceModel> _SelectedDeviceConnections = new BindableCollection<DeviceModel>();
@@ -64,11 +67,11 @@ namespace FireflyGuardian.ViewModels
         public double deviceLocationX { get; set; }
         public double deviceLocationZ { get; set; }
         public int routingType { get; set; }
-
+        public int Orientation { get; set; }
         private infoWindowShown _infoWindow { get; set; }
-        public infoWindowShown infoWindow { get { return _infoWindow; } set { previnfoWindow = _infoWindow; _infoWindow = value; NotifyOfPropertyChange(() => infoWindow);  } }
+        public infoWindowShown infoWindow { get { return _infoWindow; } set { previnfoWindow = _infoWindow; _infoWindow = value; NotifyOfPropertyChange(() => infoWindow); } }
         public infoWindowShown previnfoWindow { get; set; }
-
+        public string evacButtonColour { get; set;}
         //public bool nodeDrag { get { return nodeDrag; } set { nodeDrag = value; if (value == true) { canvasDraga = false; } } }
         //public bool canvasDraga { get { return canvasDraga; } set { canvasDraga = value; if (value == true) { nodeDrag = false; } } }
         //public object NodeGraphViewModelView { get; set; }// = new DeviceNodeGraphViewModel();
@@ -86,8 +89,12 @@ namespace FireflyGuardian.ViewModels
             FireflyGuardian.Views.DeviceNodeGraphView.AutoUpdateList += autoUpdateList;
             FireflyGuardian.ViewModels.ShellViewModel.NotfiyNewView += ViewScreen;
             FireflyGuardian.ViewModels.ShellViewModel.NotfiyDestoryView += DestoryScreen;
-            
 
+            if (ServerManagement.shouldEvacuate)
+            {
+                evacButtonColour = "#A01313"; NotifyOfPropertyChange(() => evacButtonColour);
+            }
+            else { evacButtonColour = "#3E3E3E"; NotifyOfPropertyChange(() => evacButtonColour); }
         }
 
         public void ViewScreen()
@@ -412,10 +419,13 @@ namespace FireflyGuardian.ViewModels
         }
 
 
-        public void ToggleHeart()
+        public void updateTimersText()
         {
-            ServerManagement.devices[0].hasHeartBeat = true;
-           
+            globalUpdateTimeRef = ServerManagement.nextGlobalUpdate_reference;
+            heartUpdateTimeRef = ServerManagement.nextHeartBeatCheck_reference;
+            NotifyOfPropertyChange(() => globalUpdateTimeRef);
+            NotifyOfPropertyChange(() => heartUpdateTimeRef);
+            
         }
 
         public void autoUpdateList()
@@ -438,6 +448,7 @@ namespace FireflyGuardian.ViewModels
 
                 }
             }
+            updateTimersText();
         }
         //Routing 
 
@@ -458,12 +469,13 @@ namespace FireflyGuardian.ViewModels
             NotifyOfPropertyChange(() => statusBannerHeight);
 
             ServerManagement.deviceStructureValid = false;
+            ServerResources.UDP.UDPPreformattedMessages.SetEmergencyImage();
         }
 
         public void RemoveConnection(string deletionDeviceID)
         {
             //obj
-            //Button btn = sender as Button;#
+            //Button btn = sender as Button;
             int deletionDeviceIDint = int.Parse(deletionDeviceID);
             for(int i =0; i < SelectedDeviceConnections.Count; i++)
             {
@@ -481,8 +493,10 @@ namespace FireflyGuardian.ViewModels
                 }
             }
             
-            SelectedDevice = null;
+            //SelectedDevice = null;
+            NotifyOfPropertyChange(() => SelectedDeviceConnections);
             NotifyOfPropertyChange(() => SelectedDevice);
+            
 
             RefreshCanvas?.Invoke();
                 
@@ -618,6 +632,8 @@ namespace FireflyGuardian.ViewModels
         public void UpdateEditedDevice()
         {
             SelectedDevice.deviceName = editDeviceName;
+            SelectedDevice.orientationRotation = Orientation;
+
             updateDeviceListWindow();
             infoWindow = previnfoWindow;
             statusShown = false;
@@ -626,6 +642,11 @@ namespace FireflyGuardian.ViewModels
             NotifyOfPropertyChange(() => statusText);
             NotifyOfPropertyChange(() => statusShown);
             NotifyOfPropertyChange(() => statusBannerHeight);
+
+            ServerResources.UDP.UDPPreformattedMessages.SetName(SelectedDevice.deviceName, SelectedDevice.deviceIP);
+            ServerResources.UDP.UDPPreformattedMessages.SetOrientation(SelectedDevice.orientationRotation, SelectedDevice.deviceIP);
+            
+           
 
         }
 
@@ -642,14 +663,22 @@ namespace FireflyGuardian.ViewModels
 
         #endregion
 
+       
+
         public void Evacuate()
         {
+
             if(routes != null)
             {
                 ServerManagement.ShouldEvacuate();
                 routes.Evacuate();
                 RefreshCanvas.Invoke();
-                
+                if (ServerManagement.shouldEvacuate)
+                {
+                    evacButtonColour = "#A01313"; NotifyOfPropertyChange(() => evacButtonColour);
+                }
+                else { evacButtonColour = "#3E3E3E"; NotifyOfPropertyChange(() => evacButtonColour); }
+
             }
             else
             {

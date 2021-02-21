@@ -7,8 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="FireFly"
-    Width="1500"
-    Height="800"
+    Width="1920"
+    MinWidth="1740"
+    MinHeight="800"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
 

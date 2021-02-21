@@ -35,6 +35,7 @@ namespace FireflyGuardian.ServerResources.DataAccess
             {
                 //Read the .fly folder and unzip it
                 ZipArchive zip = ZipFile.OpenRead(fileName);
+                //ToDo: fails when loading project from dashboard, settings file already exists.
                 ZipFile.ExtractToDirectory(fileName, ServerManagement.settings.absoluteLocationOfAppData + "/temp");
 
                 //Load from Settings file

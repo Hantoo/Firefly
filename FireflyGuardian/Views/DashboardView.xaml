@@ -2,62 +2,237 @@
     x:Class="FireflyGuardian.Views.DashboardView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:FireflyGuardian.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:xrpb="http://XamlRadialProgressBar/DotNet"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
-
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock
-                Margin="20,0,20,50"
-                HorizontalAlignment="Center"
-                FontSize="16pt"
-                FontWeight="Bold"
-                Foreground="#fff"
-                Text="FIRST STEPS" />
-            <Button
-                HorizontalAlignment="Center"
-                Content="Poll Connected Devices"
-                Foreground="#fff" />
-            <Button
-                x:Name="LoadFromPreviousFile"
-                Margin="10"
-                HorizontalAlignment="Center"
-                Content="Load From Previous Setup File"
-                Foreground="#fff" />
-        </StackPanel>
-    </Grid>
-    <!--<Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
-            <RowDefinition Height="0.4*" />
-            <RowDefinition Height="20" />
-            <RowDefinition Height="0.6*" />
+            <RowDefinition Height="70" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="420" MinHeight="420" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-
-        <Rectangle
+        <!--  Welcome Message  -->
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16pt"
+                FontWeight="Bold"
+                Foreground="#fff"
+                Text="{Binding welcomeMessage, Mode=OneWay}" />
+        </StackPanel>
+        <!--  Status Message  -->
+        <Grid
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="3"
-            Fill="#292929" />
-        <Rectangle
-            Grid.Row="3"
+            Margin="25"
+            Background="#282828">
+            <StackPanel Margin="30" HorizontalAlignment="Center">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <Grid VerticalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="150"
+                            Foreground="{Binding iconColour, Mode=OneWay}"
+                            Text="&#xEA3A;" />
+                        <TextBlock
+                            Margin="0,-25,0,0"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="160"
+                            Foreground="{Binding iconColour, Mode=OneWay}"
+                            Text="{Binding icon, Mode=OneWay}" />
+                    </Grid>
+                    <StackPanel
+                        Margin="50,0,0,0"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical">
+                        <TextBlock
+                            FontSize="50"
+                            FontStretch="ExtraExpanded"
+                            FontWeight="Black"
+                            Foreground="{Binding iconColour, Mode=OneWay}"
+                            Text="{Binding SystemText, Mode=OneWay}" />
+                        <TextBlock Foreground="LightGray" Text="{Binding subText, Mode=OneWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <!--  Heart Beat Count Down  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.RowSpan="2"
             Grid.Column="1"
-            Fill="#292929" />
-        <Rectangle
-            Grid.Row="3"
+            Height="420"
+            MinWidth="375"
+            MaxWidth="575"
+            Margin="20,0,20,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="#282828">
+            <StackPanel
+                Margin="50,25,50,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16pt"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="Next Heart Beat" />
+                <Grid>
+                    <xrpb:RadialProgressBar
+                        Width="200"
+                        Height="200"
+                        Foreground="#FF980E"
+                        Maximum="10"
+                        Minimum="0"
+                        Value="{Binding heartUpdateTimeRef, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+                <TextBlock
+                    Margin="0,-200,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="76"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="{Binding heartUpdateTimeRefReverse, Mode=OneWay}" />
+                <TextBlock
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="12pt"
+                    Foreground="#A2A2A2"
+                    Text="A Heartbeat is sent out to devices every 10 seconds to check that they are still connected to the network and functioning correctly. You can check which devices are working in the Device Management tab."
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+        </StackPanel>
+        <!--  Global Beat Count Down  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            MinWidth="375"
+            MinHeight="420"
+            MaxWidth="575"
+            MaxHeight="420"
+            Margin="20,0,20,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="#282828">
+            <StackPanel
+                Margin="50,25,50,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16pt"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="Next Global Update" />
+                <Grid>
+                    <xrpb:RadialProgressBar
+                        Width="200"
+                        Height="200"
+                        Foreground="#FF980E"
+                        Maximum="60"
+                        Minimum="0"
+                        Value="{Binding globalUpdateTimeRef, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+                <TextBlock
+                    Margin="0,-200,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="76"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="{Binding globalUpdateTimeRefReversed, Mode=OneWay}" />
+                <TextBlock
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="12pt"
+                    Foreground="#A2A2A2"
+                    Text="A Global Update is pushed to all devices every 60 seconds. This updates the devices with any important changes such as new default images. When an update occurs the software also runs for any routines that are scheduled."
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+        </StackPanel>
+        <!--  Devices On Network  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.RowSpan="2"
             Grid.Column="3"
-            Fill="#292929" />
-    </Grid>-->
+            MinWidth="375"
+            MinHeight="420"
+            MaxWidth="575"
+            MaxHeight="420"
+            Margin="20,0,20,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Background="#282828">
+            <StackPanel
+                Margin="50,25,50,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16pt"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="Devices On Network" />
+
+                <TextBlock
+                    Margin="0,50,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="76"
+                    FontWeight="Bold"
+                    Foreground="#fff"
+                    Text="{Binding devicesOnNetwork, Mode=OneWay}" />
+                <TextBlock
+                    Margin="0,80,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    FontSize="12pt"
+                    Foreground="#A2A2A2"
+                    Text="{Binding devicesOnNetworkMessage, Mode=OneWay}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>

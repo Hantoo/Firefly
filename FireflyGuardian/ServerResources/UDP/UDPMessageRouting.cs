@@ -17,6 +17,7 @@ namespace FireflyGuardian.ServerResources.UDP
         public void routeMessage(udpDataModel udpModel)
         {
             byte[] message = udpModel.data;
+            Console.WriteLine("Returned Message: " + utils.ByteArrayToHexString(message));
             /*if (message[message.Length-1] != 0x00)
             {
                 //Message is formatted wrongly - Expected 0xFF as a start byte but didn't get that.
@@ -29,25 +30,39 @@ namespace FireflyGuardian.ServerResources.UDP
                 switch (message[1])
                 {
                     case 0xA0:
-                        readPollResponse(message);
+                        
+                        readPollResponse(message, udpModel.altIPData.Address);
                         break;
 
-                    case 0xA9:
+                    case 0xA9: //xff\xa0\xfe
                         returnServerInfomation(udpModel.altIPData);
                         break;
 
-                case 0xA1:
-                    Heartbeat(udpModel.altIPData);
+                    case 0xA1:
+                        Heartbeat(udpModel.altIPData);
+                        break;
+
+                    case 0xA3:
+                        switch (message[2])
+                        {
+                        case 0xA2:
+                                Console.WriteLine("Device " + (udpModel.altIPData.Address.ToString()) + " Downloaded All Images From FTP");
+                            break;
+                        case 0xFE:
+                                Console.WriteLine("Device " + (udpModel.altIPData.Address.ToString()) + " Failed To Download All Images From FTP");
+                            break;
+                        }
+                        
                     break;
             }
             //}
         }
 
-        public void readPollResponse(byte[] message)
+        public void readPollResponse(byte[] message, IPAddress ipfrom)
         {
             int lengthOfMessage = utils.ConvertLoHiBytesToInt(message[2], message[3]);
             int deviceID = utils.ConvertLoHiBytesToInt(message[4], message[5]);
-            string IP = ((int)message[6]).ToString() + "." + ((int)message[7]).ToString() + "." + ((int)message[8]).ToString() + "." + ((int)message[9]).ToString();
+            string IP = ipfrom.ToString();//((int)message[6]).ToString() + "." + ((int)message[7]).ToString() + "." + ((int)message[8]).ToString() + "." + ((int)message[9]).ToString();
             //int numberOfImagesOnDevice = message[10];
             int lengthOfName = message[10]; //Utils.utils.ConvertLoHiBytesToInt(message[10]);
             byte[] byteName = new byte[lengthOfName];

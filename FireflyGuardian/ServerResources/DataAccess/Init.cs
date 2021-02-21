@@ -118,7 +118,9 @@ namespace FireflyGuardian.ServerResources.DataAccess
             Properties.Resources._18.Save(ServerManagement.settings.absoluteLocationOfAppData + "/LocalisedMediaPool/18.png");
             Properties.Resources._19.Save(ServerManagement.settings.absoluteLocationOfAppData + "/LocalisedMediaPool/19.png");
             Properties.Resources._20.Save(ServerManagement.settings.absoluteLocationOfAppData + "/LocalisedMediaPool/20.png");
-          
+            Properties.Resources._21.Save(ServerManagement.settings.absoluteLocationOfAppData + "/LocalisedMediaPool/21.png");
+            Properties.Resources._22.Save(ServerManagement.settings.absoluteLocationOfAppData + "/LocalisedMediaPool/22.png");
+
             ServerManagement.settings.slotNames[0] = "Blank";
             ServerManagement.settings.slotNames[1] = "BS ISO Left";
             ServerManagement.settings.slotNames[2] = "BS ISO Left / Up";
@@ -140,6 +142,8 @@ namespace FireflyGuardian.ServerResources.DataAccess
             ServerManagement.settings.slotNames[18] = "Down / Left";
             ServerManagement.settings.slotNames[19] = "No Entry";
             ServerManagement.settings.slotNames[20] = "Exit";
+            ServerManagement.settings.slotNames[21] = "Orientation";
+            ServerManagement.settings.slotNames[22] = "Colour Bars";
 
         }
 

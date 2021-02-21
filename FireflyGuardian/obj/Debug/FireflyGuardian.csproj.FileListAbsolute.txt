@@ -65,7 +65,6 @@ C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualSt
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.Shell.Framework.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.Shell.Interop.8.0.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.Telemetry.dll
-C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\System.Threading.Tasks.Dataflow.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.Shell.Interop.9.0.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\System.Collections.Immutable.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.ComponentModelHost.dll
@@ -79,3 +78,7 @@ C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualSt
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\stdole.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.MSXML.dll
 C:\Users\joelb\source\repos\Firefly\FireflyGuardian\obj\Debug\FireflyGuardian.exe.config
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\System.Memory.dll
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\System.Buffers.dll
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\Microsoft.VisualStudio.GraphModel.xml
+C:\Users\joelb\source\repos\Firefly\FireflyGuardian\bin\Debug\XamlRadialProgressBar.DotNet.dll

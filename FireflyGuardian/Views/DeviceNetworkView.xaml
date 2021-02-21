@@ -63,39 +63,74 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Background="#292929" Orientation="Horizontal">
-            <Button
-                x:Name="RefreshDevices"
-                Margin="5,0,0,0"
-                Background="#3E3E3E"
-                Content="Poll Connected Devices"
-                Foreground="#ffffff" />
-            <Button
-                x:Name="AddNewDevice"
-                Margin="5,0,0,0"
-                Background="#3E3E3E"
-                Content="Add New Device"
-                Foreground="#ffffff" />
-            <!--<Button
+        <Grid Background="#292929">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    x:Name="RefreshDevices"
+                    Margin="5,0,0,0"
+                    Background="#3E3E3E"
+                    Content="Poll Connected Devices"
+                    Foreground="#ffffff" />
+                <Button
+                    x:Name="AddNewDevice"
+                    Margin="5,0,0,0"
+                    Background="#3E3E3E"
+                    Content="Add New Device"
+                    Foreground="#ffffff" />
+                <!--<Button
                 x:Name="loadDevicesFromJson"
                 Margin="5,0,0,0"
                 Background="#3E3E3E"
                 Content="Load Device Settings"
                 Foreground="#ffffff" />-->
 
-            <Button
-                x:Name="recalculateRoutes"
-                Margin="45,0,0,0"
-                Background="#3E3E3E"
-                Content="Recalculate Routes"
-                Foreground="#ffffff" />
-            <Button
-                x:Name="Evacuate"
-                Margin="5,0,0,0"
-                Background="#3E3E3E"
-                Content="Evacuate"
-                Foreground="#ffffff" />
-        </StackPanel>
+                <Button
+                    x:Name="recalculateRoutes"
+                    Margin="45,0,0,0"
+                    Background="#3E3E3E"
+                    Content="Recalculate Routes"
+                    Foreground="#ffffff" />
+                <Button
+                    x:Name="Evacuate"
+                    Margin="5,0,0,0"
+                    Background="{Binding evacButtonColour, Mode=OneWay}"
+                    Content="Evacuate"
+                    Foreground="#ffffff" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <StackPanel Width="130" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="Next Heartbeat:"
+                        Foreground="White" />
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding heartUpdateTimeRef, Mode=OneWay}"
+                        Foreground="#FFFFBA4F" />
+                </StackPanel>
+                <StackPanel Width="160" Orientation="Horizontal">
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="Next Global Update:"
+                        Foreground="White" />
+                    <Label
+                        VerticalAlignment="Center"
+                        Content="{Binding globalUpdateTimeRef, Mode=OneWay}"
+                        Foreground="#FFFFBA4F" />
+                </StackPanel>
+            </StackPanel>
+
+        </Grid>
         <StackPanel
             Grid.Row="1"
             MaxHeight="0"
@@ -437,6 +472,7 @@
                                         <ComboBoxItem Content="Step" />
                                     </ComboBox>-->
                                 </StackPanel>
+
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -468,6 +504,33 @@
                         Foreground="#fff"
                         Text="Device Name:" />
                     <TextBox x:Name="editDeviceName" />
+                    <TextBlock
+                        Padding="0,30,0,0"
+                        FontWeight="Medium"
+                        Foreground="#fff"
+                        Text="Device Orientation:" />
+                    <ComboBox x:Name="Orientation" SelectedIndex="{Binding Orientation, Mode=TwoWay}">
+                        <ComboBoxItem>
+                            <TextBlock>0 Degrees</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>-90 / 270 Degrees</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>180 Degrees</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>90 / -270 Degrees</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+
+                                    <TextBlock Text="{Binding deviceName}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <Button
                         x:Name="RemoveDeviceFromSystem"
                         Margin="0,20,0,20"

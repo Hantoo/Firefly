@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
+
 namespace FireflyGuardian.Views
 {
     /// <summary>
@@ -23,6 +25,7 @@ namespace FireflyGuardian.Views
         public DashboardView()
         {
             InitializeComponent();
+          
         }
     }
 }

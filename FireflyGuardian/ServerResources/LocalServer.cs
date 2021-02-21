@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-
+using System.Net;
 
 namespace FireflyGuardian.ServerResources
 {
+    public delegate void NotifyTickEvent();
     class LocalServer
     {
 
@@ -16,6 +17,7 @@ namespace FireflyGuardian.ServerResources
 
         DateTime nextHeartBeat;
         DateTime nextActiveImage;
+        DateTime nextSecond;
         // Check if evac has happened
 
         //Check if routine was suppose to be active
@@ -36,19 +38,23 @@ namespace FireflyGuardian.ServerResources
             serverRunning = false;
         }
 
-        
 
+        
+        public static event NotifyTickEvent tickComplete;
         public void serverLoop()
         {
 
             Console.WriteLine("[SERVER] - Server Running");
             nextHeartBeat = DateTime.Now;
             nextActiveImage = DateTime.Now;
+           
             while (serverRunning)
             {
                
                 checkEvacuate();
-               //Every 10 Seconds Do:
+                //Every 10 Seconds Do:
+                ServerManagement.nextHeartBeatCheck_reference = Convert.ToInt32((nextHeartBeat - DateTime.Now).TotalSeconds);
+                ServerManagement.nextGlobalUpdate_reference = Convert.ToInt32((nextActiveImage - DateTime.Now).TotalSeconds);
                 if (DateTime.Compare(nextHeartBeat, DateTime.Now) <= 0 && !ServerManagement.shouldEvacuate)
                 {
                     Console.WriteLine("[LOCAL SERVER] HeartBeat");
@@ -61,7 +67,19 @@ namespace FireflyGuardian.ServerResources
                     activeImage();
                     checkRoutinesTimes();
                 }
+                if (DateTime.Compare(nextSecond, DateTime.Now) <= 0)
+                {
+                    OnProcessCompleted();
+                    nextSecond = DateTime.Now.AddSeconds(1.0);
+                }
+                
             }
+        }
+
+        protected virtual void OnProcessCompleted()
+        {
+            tickComplete?.Invoke();
+            
         }
 
         public void activeImage()
@@ -73,6 +91,7 @@ namespace FireflyGuardian.ServerResources
                 //Will send out the image to any devices not being controlled via a routine
                 if (!ServerManagement.devices[i].isRunningRoutine)
                 {
+
                     byte[] msg = { 0xFF, 0x03, 0x01, (byte)ServerManagement.devices[i].activeImageSlot };
                     ServerManagement.udpServer.UDPSend(msg, ServerManagement.devices[i].deviceIP);
                 }
@@ -85,11 +104,13 @@ namespace FireflyGuardian.ServerResources
             {
                 while (ServerManagement.shouldEvacuate)
                 {
+                    
                     for (int i = 0; i < ServerManagement.devices.Count; i++) {
 
                         byte[] msg = { 0xFF, 0x03, 0x01, (byte)ServerManagement.devices[i].activeImageSlot};
                         ServerManagement.udpServer.UDPSend(msg, ServerManagement.devices[i].deviceIP);
                     }
+                    OnProcessCompleted();
                     Thread.Sleep(1000); //Sleep for 1 second, then loop again
                 }
             }
@@ -98,6 +119,14 @@ namespace FireflyGuardian.ServerResources
         public void heartbeat()
         {
             Console.WriteLine("[LOCAL SERVER] HeatBeat Pulse Out");
+            Byte[] message = { 0xff, 0x02 };
+            IPAddress[] addresses = ServerManagement.udpServer.GetBroadCastIP();
+            for (int i = 0; i < addresses.Length; i++)
+            {
+                string ipAddressString = addresses[i].ToString();
+                Console.WriteLine("Broadcast IP address: {0}", ipAddressString);
+                ServerManagement.udpServer.UDPSend(message, ipAddressString);
+            }
             nextHeartBeat = DateTime.Now;
             nextHeartBeat = nextHeartBeat.AddSeconds(10);
         }

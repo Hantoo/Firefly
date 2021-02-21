@@ -45,7 +45,7 @@ namespace FireflyGuardian.ViewModels
             {
                 hasFile = false;
                 ServerResources.DataAccess.json.unZipProjectFile(openShowFile.FileName);
-                _shell.generatePages();
+                //_shell.generatePages();
                 _shell.ExitSetupView();
             }
         }

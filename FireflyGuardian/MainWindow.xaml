@@ -6,9 +6,10 @@
     xmlns:local="clr-namespace:FireflyGuardian"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
-    Width="800"
-    Height="450"
+    Width="1920"
+    Height="1080"
     Icon="/FireflyGuardian;component/UIResources/Images/ApplicationResources/icon.ico"
+    ResizeMode="CanMinimize"
     mc:Ignorable="d">
     <Grid />
 </Window>
