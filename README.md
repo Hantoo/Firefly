@@ -10,6 +10,12 @@ https://github.com/Kinnara/ModernWpf
 The Hardware Software for the RaspberryPi utilises the following packages:  
 https://github.com/hzeller/rpi-rgb-led-matrix  
 
+## Requirements
+* Windows PC Running Windows 7 or Later
+* 1920 x 1080 Screen 
+* Windows Default Theme - PC not running custom theme or dark theme for windows
+* .Net 4.8 or later 
+
 ## Photos of Software And Hardware 
   
 ![alt text](Assets/Dashboard1.PNG)
