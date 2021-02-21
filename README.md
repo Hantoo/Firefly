@@ -7,3 +7,5 @@ Firefly is an fire safety solution to completement / be as an additional safety 
 ![alt text](Assets/MediaLib1.PNG)
 
 ![alt text](Assets/Routines1.PNG)
+
+![alt text](Assets/FireflyNode1.bmp)
