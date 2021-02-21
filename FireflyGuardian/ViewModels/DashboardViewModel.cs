@@ -34,7 +34,7 @@ namespace FireflyGuardian.ViewModels
         public string subText { get; set; }
         public void Tickupdatee()
         {
-            Console.WriteLine("Tick" + DateTime.Now.Second);
+            
             updateTimers();
            
         }
