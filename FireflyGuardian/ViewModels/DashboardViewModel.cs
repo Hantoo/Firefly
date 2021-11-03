@@ -62,7 +62,7 @@ namespace FireflyGuardian.ViewModels
             else
             {
                 //false
-                SystemText = "A L L   S Y S T E M   N O M I N A L";
+                SystemText = "A L L   S Y S T E M S   N O M I N A L";
                 iconColour = "#42DC07";
                 icon = "\uF13E";
                 subText = "All functions are running as expected.";

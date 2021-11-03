@@ -244,10 +244,7 @@ namespace FireflyGuardian.ViewModels
         {
             _deviceList.Clear();
             deviceList = new BindableCollection<DeviceModel>(ServerResources.ServerManagement.devices);
-            //for (int i = 0; i < ServerResources.ServerManagement.devices.Count; i++)
-            //{
-            //    _deviceList.Add(ServerResources.ServerManagement.devices[i]);
-            //}
+    
             NotifyOfPropertyChange(() => _deviceList);
             NotifyOfPropertyChange(() => deviceList);
             RefreshCanvas?.Invoke();

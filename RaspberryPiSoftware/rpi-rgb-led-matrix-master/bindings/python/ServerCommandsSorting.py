@@ -1,3 +1,6 @@
+## This file is used to look at each byte of the command that the device recieved and work
+## out what needs to be done with it 
+
 #from FireFly_Matrix import *
 from ftpFunctions import *
 from ImageDisplay import *

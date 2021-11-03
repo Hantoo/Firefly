@@ -1,3 +1,4 @@
+## This is the main script that is run to trigger the main device functionality
 
 from ServerCommandsSorting import *
 import time
@@ -24,7 +25,9 @@ HeartBeat = True
 
 
 def ThreadHeartTimer(name):
-  
+  	#This thread runs to count down from the timer set. 
+  	#If the timer reaches 0 then the heart beat is set to false, indicating that
+  	#the heartbeat has been lost. 
 	global timeCountdown
 	global HeartBeat
 	while(timeCountdown != 0):
@@ -38,14 +41,17 @@ def ThreadHeartTimer(name):
 	
 
 def Main():
+	#This is the function that is run to start the program off.
 	global HeartBeat
 	HeartBeat = True
 	hardware_infomation = None
+
 	with open('settings.json', 'r') as f:
 		hardware_infomation = json.load(f)
 	#hardware_infomation["Name"], hardware_infomation["IP"] ... "EmergencyImage", "Rotation", "Brightness", "DownloadImageLocation", "RunTime"
 	
 	#Network Setups
+	#Create a socket for listening to UDP for listening to both UDP IP unicast and broadcast infomation
 	global sock
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) # UDP
 
@@ -61,42 +67,9 @@ def Main():
 	
 	sock.bind(("", 42891))
 	
-	
-
-
-
 	print(sock.getsockname()[0]) # '192.168.0.110'
-	
-	#sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	#sock.setblocking(False)
-	#print("Local Ip Addresses:")
-	#ipAddr =  (subprocess.getoutput('hostname -I')).split(' ')
-	#print(ipAddr)
-	#server_address = ipAddr[0]
-	#server_port = 42891
-	#server = (server_address, server_port)
-	#sock.bind(server)
-	
-	import ipaddress
 
-	#IP = '192.168.32.16'
-	#MASK = '255.255.255.0'
-
-	#host = ipaddress.IPv4Address(ipAddr[0])
-	#net = ipaddress.IPv4Network(ipAddr[0] + '/' + MASK, False)
-	#print('IP:', ipAddr[0])
-	#print('Mask:', MASK)
-	#print('Subnet:', ipaddress.IPv4Address(int(host) & int(net.netmask)))
-	#print('Host:', ipaddress.IPv4Address(int(host) & int(net.hostmask)))
-	#print('Broadcast:', net.broadcast_address)
-	#broadcastIP = 'b\xFF\xFF\xFF\xFF'
-	#strBroadcastaddr = str(net.broadcast_address)
-	#sock.bind((strBroadcastaddr,12345))
-	#print("Listening on " + server_address + ":" + str(server_port))
-	
-
-
-
+	#Sets a RGB matrix using all the correct paramters for use with the custom PCB we have created.
 	options = RGBMatrixOptions()
 	options.rows = 64
 	options.cols = 64
@@ -109,16 +82,12 @@ def Main():
 	#options.daemon = 1 #Makes the entire script run in the background - final final step of the pi
 	global matrix
 	matrix = RGBMatrix(options = options)
-	
-	
-
 	while True:
-		
+		#While loop runs indefinately for the program to constantly function and not close.
+		#When a heartbeat has been detected within the given time, then the system will run normally.
 		while HeartBeat:
-			
-			#payload, client_address = sock.recvfrom(4096)
-			#dataInSocket, _, _ = select.select([sock], [], [])
 			payload = None
+			#Listen out for a UDP packet without blocking
 			try:
 				newLost = True
 				payload, client_address = sock.recvfrom(4096)
@@ -126,14 +95,14 @@ def Main():
 			except socket.error:
 				newLost = True
 				pass ## handle error
-			if payload != None:
-				print("I HAZ DATA :D")
-				#payload, client_address = sock.recvfrom(4096)
-				
+			if payload != None:			
 				print("Command From "+client_address[0]+" On Port "+str(client_address[1]))
 				print(payload)
 				#Returned 0 - Error in completing task | Returned 1 - Completed Task Successfully.
+				#if a packet has been detected then route the package and activate what needs to be run.
 				result = sortRecievedCommands(payload, matrix) 
+				#If a result has been returned and we need to send something back to the server,
+				#then so it here
 				print(result)
 				if(type(result) == type(bytearray())):
 					print("Sending To Client: "+str(result)) 
@@ -145,10 +114,13 @@ def Main():
 				print("------- Command Complete -------")
 		#Show Assigned Emergency Image If Heartbeat lost
 		if newLost:
+			#Set a byte array for the correct byte values to display the emerancy image
 			ImageCommandByteArray = [255,3,1,int(hardware_infomation["EmergencyImage"])]
 			sortRecievedCommands(ImageCommandByteArray, matrix) 
 			newLost = False;
 		payload = None
+		# Listen out for a heartbeat, and if a start beat has been detected then return to the code above,
+		#and start the heart beat monitor / timer again
 		try:
 			payload, client_address = sock.recvfrom(4096)
 		except socket.error:

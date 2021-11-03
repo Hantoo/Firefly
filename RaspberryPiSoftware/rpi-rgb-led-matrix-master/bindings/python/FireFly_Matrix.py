@@ -5,9 +5,13 @@ def test():
     print("Hello")
 
 def imageviewer(image_file):
+
+    #Get the image number that is passed through to this function as a parameter and decode it to be a number. Then load that file
+    #from the path below.
     #!/usr/bin/env python
     image = Image.open("/home/pi/Desktop/rpi-rgb-led-matrix/bindings/python/samples/MediaPool/"+  image_file.decode("utf-8") +".png")
 
+    #Create a new RGB matrix with any options that have been updated
     # Configuration for the matrix
     options = RGBMatrixOptions()
     options.rows = 64
